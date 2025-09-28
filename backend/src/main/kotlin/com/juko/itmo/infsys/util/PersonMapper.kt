@@ -1,14 +1,16 @@
 package com.juko.itmo.infsys.util
 
-import com.juko.itmo.infsys.data.dto.Person
 import com.juko.itmo.infsys.data.entity.PersonEntity
+import com.juko.itmo.infsys.data.model.dto.Person
+import org.springframework.stereotype.Service
 
-class PersonMapper : Mapper<PersonEntity, Person> {
-    override fun toDto(entity: Person): PersonEntity {
+@Service
+class PersonMapper : Mapper<Person, PersonEntity> {
+    override fun toEntity(dto: Person): PersonEntity {
         TODO("Not yet implemented")
     }
 
-    override fun toEntity(dto: PersonEntity): Person {
+    override fun toDto(entity: PersonEntity): Person {
         TODO("Not yet implemented")
     }
 }

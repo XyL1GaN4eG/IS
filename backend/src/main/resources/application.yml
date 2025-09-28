@@ -1,1 +1,15 @@
-spring.application.name=backend
+spring:
+  application:
+    name: backend
+  datasource:
+    url: jdbc:postgresql://pg:5432/studs
+    username: studs
+    password: studs
+  jpa:
+    database-platform: org.eclipse.persistence.platform.database.PostgreSQLPlatform
+    properties:
+      eclipselink:
+        ddl-generation: create-or-extend-tables
+        weaving: static
+        logging:
+          level: FINE

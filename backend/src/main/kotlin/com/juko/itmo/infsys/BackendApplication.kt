@@ -1,4 +1,4 @@
-package com.juko.itmo.`is`
+package com.juko.itmo.infsys
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

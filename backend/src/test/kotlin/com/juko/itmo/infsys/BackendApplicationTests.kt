@@ -1,4 +1,4 @@
-package com.juko.itmo.`is`
+package com.juko.itmo.infsys
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest

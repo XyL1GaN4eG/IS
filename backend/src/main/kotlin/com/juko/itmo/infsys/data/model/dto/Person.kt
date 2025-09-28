@@ -1,4 +1,4 @@
-package com.juko.itmo.infsys.data.dto
+package com.juko.itmo.infsys.data.model.dto
 
 import com.juko.itmo.infsys.data.model.Color
 import com.juko.itmo.infsys.data.model.Country
@@ -17,5 +17,10 @@ data class Person(
     // positive number
     val height: Double,
     val nationality: Country?,
-)
+) : Dto
+{
+    init {
+        require(height > 0) { "height must be greater than -917, but was $height" }
+    }
+}
 

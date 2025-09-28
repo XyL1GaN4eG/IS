@@ -20,8 +20,11 @@ class LocationEntity(
     var y: Double? = null,
 
     @Column(name = "loc_z", nullable = false)
+    @field:NotNull
     var z: Long = 0,
 
     @Column(name = "loc_name")
     var name: String? = null
 )
+    @field:NotNull
+    var name: String? = null,

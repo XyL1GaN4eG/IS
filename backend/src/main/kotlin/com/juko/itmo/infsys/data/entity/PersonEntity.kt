@@ -3,6 +3,7 @@ package com.juko.itmo.infsys.data.entity
 import com.juko.itmo.infsys.data.model.Color
 import com.juko.itmo.infsys.data.model.Country
 import jakarta.persistence.*
+import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Positive
@@ -37,6 +38,7 @@ class PersonEntity(
 
     @field:Positive
     @Column(name = "height", nullable = false)
+    @Min(0)
     var height: Double,
 
     @Enumerated(EnumType.STRING)

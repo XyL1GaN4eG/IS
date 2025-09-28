@@ -1,11 +1,15 @@
-package com.juko.itmo.infsys.entity
+package com.juko.itmo.infsys.data.entity
 
-import jakarta.persistence.Column
-import jakarta.persistence.Embeddable
+import jakarta.persistence.*
 import jakarta.validation.constraints.NotNull
 
-@Embeddable
-class LocationEmbeddable(
+@Entity
+@Table(name = "location")
+class LocationEntity(
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "id", nullable = false)
+    var id: Long? = null,
 
     @field:NotNull
     @Column(name = "loc_x", nullable = false)

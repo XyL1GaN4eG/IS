@@ -11,19 +11,17 @@ import java.time.ZonedDateTime
 @Entity
 @Table(name = "persons")
 class PersonEntity(
-
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "person_seq")
-    @SequenceGenerator(name = "person_seq", sequenceName = "person_id_seq", allocationSize = 1)
-    @Column(name = "id")
-    var id: Int? = null,
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "id", nullable = false)
+    var id: Long? = null,
 
     @field:NotBlank
     @Column(name = "name", nullable = false)
     var name: String,
 
-    @field:NotNull
-    @Embedded
+    @ManyToOne(cascade = [CascadeType.ALL], optional = false)
+    @JoinColumn(name = "coordinates_id", nullable = false)
     var coordinates: CoordinatesEntity,
 
     @Column(name = "creation_date", nullable = false)
@@ -45,8 +43,8 @@ class PersonEntity(
     @Column(name = "nationality")
     var nationality: Country? = null,
 
-    @field:NotNull
-    @Embedded
+    @ManyToOne(cascade = [CascadeType.ALL], optional = false)
+    @JoinColumn(name = "location_id", nullable = false)
     var location: LocationEntity,
 ) {
 

@@ -1,6 +1,9 @@
 package com.juko.itmo.infsys.util
 
-interface Mapper<T, V> {
-    fun toEntity(dto: T): V
-    fun toDto(entity: V): T
+import com.juko.itmo.infsys.data.entity.AbstractEntity
+import com.juko.itmo.infsys.data.model.dto.Dto
+
+interface Mapper<D : Dto, E : AbstractEntity> {
+    fun toEntity(dto: D): E
+    fun toDto(entity: E): D
 }

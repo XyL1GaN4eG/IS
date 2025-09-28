@@ -5,18 +5,12 @@ import com.juko.itmo.infsys.data.model.Country
 import jakarta.persistence.*
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Positive
 import java.time.ZonedDateTime
 
 @Entity
 @Table(name = "persons")
 class PersonEntity(
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "id", nullable = false)
-    var id: Long? = null,
-
     @field:NotBlank
     @Column(name = "name", nullable = false)
     var name: String,
@@ -48,8 +42,7 @@ class PersonEntity(
     @ManyToOne(cascade = [CascadeType.ALL], optional = false)
     @JoinColumn(name = "location_id", nullable = false)
     var location: LocationEntity,
-) {
-
+) : AbstractEntity() {
     @PrePersist
     fun prePersist() {
         if (creationDate == null) {

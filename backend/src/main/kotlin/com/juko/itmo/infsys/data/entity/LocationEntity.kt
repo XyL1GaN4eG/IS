@@ -14,8 +14,8 @@ class LocationEntity(
     @Column(name = "loc_y", nullable = false)
     var y: Double,
 
-    @Column(name = "loc_z", nullable = false)
     @field:NotNull
+    @Column(name = "loc_z", nullable = false)
     var z: Long,
 
     @Column(name = "loc_name")

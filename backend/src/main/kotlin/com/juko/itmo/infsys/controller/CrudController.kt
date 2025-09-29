@@ -1,7 +1,7 @@
 package com.juko.itmo.infsys.controller
 
 import com.juko.itmo.infsys.data.model.dto.Dto
-import com.juko.itmo.infsys.service.CrudService
+import com.juko.itmo.infsys.service.abstraction.CrudService
 import org.springframework.web.bind.annotation.*
 
 abstract class CrudController<D : Dto>(

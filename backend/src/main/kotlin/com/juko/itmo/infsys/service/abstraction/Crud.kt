@@ -1,4 +1,4 @@
-package com.juko.itmo.infsys.service
+package com.juko.itmo.infsys.service.abstraction
 
 import com.juko.itmo.infsys.data.model.dto.Dto
 

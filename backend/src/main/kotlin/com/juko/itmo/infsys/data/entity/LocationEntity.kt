@@ -8,17 +8,17 @@ import jakarta.validation.constraints.NotNull
 class LocationEntity(
     @field:NotNull
     @Column(name = "loc_x", nullable = false)
-    var x: Int? = null,
+    var x: Int,
 
     @field:NotNull
     @Column(name = "loc_y", nullable = false)
-    var y: Double? = null,
+    var y: Double,
 
     @Column(name = "loc_z", nullable = false)
     @field:NotNull
-    var z: Long = 0,
+    var z: Long,
 
     @Column(name = "loc_name")
     @field:NotNull
-    var name: String? = null,
+    var name: String,
 ) : AbstractEntity()

@@ -1,10 +1,10 @@
-package com.juko.itmo.infsys.util
+package com.juko.itmo.infsys.util.mapper
 
 import com.juko.itmo.infsys.data.entity.CoordinatesEntity
 import com.juko.itmo.infsys.data.model.dto.Coordinates
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 
-@Service
+@Component
 class CoordinateMapper : Mapper<Coordinates, CoordinatesEntity> {
     override fun toEntity(dto: Coordinates) =
         CoordinatesEntity(dto.x, dto.y)

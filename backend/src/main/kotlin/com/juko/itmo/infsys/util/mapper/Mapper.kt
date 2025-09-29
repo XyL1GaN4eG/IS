@@ -1,4 +1,4 @@
-package com.juko.itmo.infsys.util
+package com.juko.itmo.infsys.util.mapper
 
 import com.juko.itmo.infsys.data.entity.AbstractEntity
 import com.juko.itmo.infsys.data.model.dto.Dto

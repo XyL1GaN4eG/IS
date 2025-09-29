@@ -10,7 +10,6 @@ import java.time.ZonedDateTime
 @Entity
 @Table(name = "person")
 class PersonEntity(
-    @field:NotBlank
     @Column(name = "name", nullable = false)
     @NotBlank(message = "Name may not be empty")
     @Size(min = 2, max = 128, message = "Name must be between 2 and 128 characters long")
@@ -36,9 +35,8 @@ class PersonEntity(
     var hairColor: Color? = null,
 
     @NotNull
-    @field:Positive
+    @Positive
     @Column(name = "height", nullable = false)
-    @Min(0)
     var height: Double,
 
     @Nullable

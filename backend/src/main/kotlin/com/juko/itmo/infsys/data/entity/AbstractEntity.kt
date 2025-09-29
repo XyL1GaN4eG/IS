@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull
 abstract class AbstractEntity(
     @Id
     @NotNull
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     var id: Long? = null,
 )

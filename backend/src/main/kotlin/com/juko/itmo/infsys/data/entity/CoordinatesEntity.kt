@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotNull
 
 @Entity
-@Table(name = "Coordinates")
+@Table(name = "coordinates")
 class CoordinatesEntity(
     @NotNull
     @field:Min(-916, message = "x must be > -917")

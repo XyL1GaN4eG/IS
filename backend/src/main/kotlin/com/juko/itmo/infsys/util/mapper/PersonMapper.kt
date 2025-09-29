@@ -1,10 +1,10 @@
-package com.juko.itmo.infsys.util
+package com.juko.itmo.infsys.util.mapper
 
 import com.juko.itmo.infsys.data.entity.PersonEntity
 import com.juko.itmo.infsys.data.model.dto.Person
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 
-@Service
+@Component
 class PersonMapper(
     private val locationMapper: LocationMapper,
     private val coordinateMapper: CoordinateMapper,

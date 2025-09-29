@@ -1,10 +1,9 @@
 package com.juko.itmo.infsys.data.model.dto
 
+import jakarta.validation.constraints.Min
+
 data class Coordinates(
+    @Min(-917)
     val x: Int,
     val y: Float,
-) : Dto {
-    init {
-        require(x > -917) { "x must be greater than -917, but was $x" }
-    }
-}
+) : Dto

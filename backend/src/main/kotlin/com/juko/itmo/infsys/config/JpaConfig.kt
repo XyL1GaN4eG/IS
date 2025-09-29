@@ -12,7 +12,7 @@ import org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter
 import javax.sql.DataSource
 
 @Configuration
-@EntityScan("com.juko.itmo.infsys.entity")
+@EntityScan("com.juko.itmo.infsys.data.entity")
 @EnableJpaRepositories("com.juko.itmo.infsys.data.repository")
 class JpaConfig {
 

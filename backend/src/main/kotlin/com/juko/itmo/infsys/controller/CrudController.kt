@@ -13,9 +13,6 @@ abstract class CrudController<D : Dto>(
     @GetMapping("/{id}")
     fun read(@PathVariable id: Long): D = crudService.read(id)
 
-    @PutMapping
-    fun update(@RequestBody dto: D): D = crudService.update(dto)
-
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: Long) = crudService.delete(id)
 }

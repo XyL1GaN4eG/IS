@@ -15,6 +15,11 @@ class PersonEntity(
     @Size(min = 2, max = 128, message = "Name must be between 2 and 128 characters long")
     var name: String,
 
+    @Column(name = "author_id", nullable = false)
+    @Positive
+    @NotNull
+    val authorId: Long,
+
     @NotNull
     @ManyToOne(cascade = [CascadeType.ALL], optional = false)
     @JoinColumn(name = "coordinates_id", nullable = false)

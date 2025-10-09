@@ -17,7 +17,8 @@ class PersonMapper(
         hairColor = dto.hairColor,
         height = dto.height,
         nationality = dto.nationality,
-        location = locationMapper.toEntity(dto.location)
+        location = locationMapper.toEntity(dto.location),
+        authorId = 1, // TODO: implement role-system
     )
 
     override fun toDto(entity: PersonEntity) =

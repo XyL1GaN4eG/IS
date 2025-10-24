@@ -25,7 +25,10 @@ class JpaConfig {
         val factory = LocalContainerEntityManagerFactoryBean()
         factory.dataSource = dataSource
         factory.jpaVendorAdapter = vendorAdapter
-        factory.setPackagesToScan("com.juko.itmo.infsys.entity")
+        factory.setPackagesToScan(
+            "com.juko.itmo.infsys.data.entity",
+            "com.juko.itmo.infsys.data.converter"
+        )
         factory.setJpaPropertyMap(
             mapOf(
                 PersistenceUnitProperties.WEAVING to "static",

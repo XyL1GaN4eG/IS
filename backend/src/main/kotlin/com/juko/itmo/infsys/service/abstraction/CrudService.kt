@@ -3,6 +3,8 @@ package com.juko.itmo.infsys.service.abstraction
 import com.juko.itmo.infsys.data.entity.AbstractEntity
 import com.juko.itmo.infsys.data.model.dto.Dto
 import com.juko.itmo.infsys.util.mapper.Mapper
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 
 abstract class CrudService<D : Dto, E : AbstractEntity>(
@@ -18,4 +20,7 @@ abstract class CrudService<D : Dto, E : AbstractEntity>(
             .orElseThrow { NoSuchElementException("Not found: $id") })
 
     override fun delete(id: Long) = repository.deleteById(id)
+
+    open fun list(pageable: Pageable): Page<D> =
+        repository.findAll(pageable).map { mapper.toDto(it) }
 }

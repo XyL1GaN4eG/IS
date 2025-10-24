@@ -12,7 +12,7 @@ class PersonMapper(
     override fun toEntity(dto: Person): PersonEntity = PersonEntity(
         name = dto.name,
         coordinates = coordinateMapper.toEntity(dto.coordinates),
-        creationDate = dto.creationDate,
+        creationDate = null,
         eyeColor = dto.eyeColor,
         hairColor = dto.hairColor,
         height = dto.height,
@@ -21,9 +21,9 @@ class PersonMapper(
         authorId = 1, // TODO: implement role-system
     )
 
-    override fun toDto(entity: PersonEntity) =
+    override fun toDto(entity: PersonEntity): Person =
         Person(
-            id = entity.id!!,
+            id = entity.id,
             name = entity.name,
             coordinates = coordinateMapper.toDto(entity.coordinates),
             creationDate = entity.creationDate!!,

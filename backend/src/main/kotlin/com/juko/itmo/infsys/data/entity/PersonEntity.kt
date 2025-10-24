@@ -2,10 +2,15 @@ package com.juko.itmo.infsys.data.entity
 
 import com.juko.itmo.infsys.data.model.Color
 import com.juko.itmo.infsys.data.model.Country
+import com.juko.itmo.infsys.data.converter.ZonedDateTimeConverter
 import jakarta.annotation.Nullable
 import jakarta.persistence.*
 import jakarta.validation.constraints.*
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.ZonedDateTime
+import java.util.Date
 
 @Entity
 @Table(name = "person")
@@ -26,7 +31,8 @@ class PersonEntity(
     var coordinates: CoordinatesEntity,
 
     @NotNull
-    @Column(name = "creation_date", nullable = false)
+    @Convert(converter = ZonedDateTimeConverter::class)
+    @Column(name = "creation_date", nullable = false,)
     var creationDate: ZonedDateTime? = null,
 
     @NotNull
@@ -56,8 +62,6 @@ class PersonEntity(
 ) : AbstractEntity() {
     @PrePersist
     fun prePersist() {
-        if (creationDate == null) {
             creationDate = ZonedDateTime.now()
-        }
     }
 }

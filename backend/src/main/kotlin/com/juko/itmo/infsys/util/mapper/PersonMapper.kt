@@ -9,17 +9,19 @@ class PersonMapper(
     private val locationMapper: LocationMapper,
     private val coordinateMapper: CoordinateMapper,
 ) : Mapper<Person, PersonEntity> {
-    override fun toEntity(dto: Person): PersonEntity = PersonEntity(
-        name = dto.name,
-        coordinates = coordinateMapper.toEntity(dto.coordinates),
-        creationDate = null,
-        eyeColor = dto.eyeColor,
-        hairColor = dto.hairColor,
-        height = dto.height,
-        nationality = dto.nationality,
-        location = locationMapper.toEntity(dto.location),
-        authorId = 1, // TODO: implement role-system
-    )
+
+    override fun toEntity(dto: Person): PersonEntity =
+        PersonEntity(
+            name = dto.name,
+            authorId = 1, // TODO roles
+            coordinates = coordinateMapper.toEntity(dto.coordinates),
+            creationDate = null,
+            eyeColor = dto.eyeColor,
+            hairColor = dto.hairColor,
+            height = dto.height,
+            nationality = dto.nationality,
+            location = locationMapper.toEntity(dto.location),
+        )
 
     override fun toDto(entity: PersonEntity): Person =
         Person(

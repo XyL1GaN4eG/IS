@@ -27,4 +27,8 @@ interface PersonRepository : JpaRepository<PersonEntity, Long> {
 
     @Query("select count(p) from PersonEntity p")
     fun totalCount(): Long
+
+    fun existsByLocationId(locationId: Long): Boolean
+
+    fun findAllByLocationId(locationId: Long): List<PersonEntity>
 }

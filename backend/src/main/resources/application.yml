@@ -2,9 +2,10 @@ spring:
   application:
     name: backend
   datasource:
-    url: jdbc:postgresql://pg:5432/studs
-    username: studs
-    password: studs
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:studs}
+    username: ${POSTGRES_USER:s408614}
+    password: ${POSTGRES_PASSWORD:mCL2Y1wQAwyz3d9G}
+    driver-class-name: org.postgresql.Driver
   jpa:
     database-platform: org.eclipse.persistence.platform.database.PostgreSQLPlatform
     properties:
@@ -13,3 +14,5 @@ spring:
         weaving: static
         logging:
           level: FINE
+server:
+  port: 43261

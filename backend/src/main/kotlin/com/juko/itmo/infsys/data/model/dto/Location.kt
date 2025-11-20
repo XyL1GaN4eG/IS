@@ -1,8 +1,9 @@
 package com.juko.itmo.infsys.data.model.dto
 
 data class Location(
-    val x: Int,
-    val y: Double,
-    val z: Long,
-    val name: String,
+    val id: Long? = null,
+    val x: Int? = null,
+    val y: Double? = null,
+    val z: Long? = null,
+    val name: String? = null,
 ) : Dto

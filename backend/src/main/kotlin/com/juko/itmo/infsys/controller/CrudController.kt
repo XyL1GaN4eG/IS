@@ -2,6 +2,7 @@ package com.juko.itmo.infsys.controller
 
 import com.juko.itmo.infsys.data.model.dto.Dto
 import com.juko.itmo.infsys.service.abstraction.CrudService
+import com.juko.itmo.infsys.service.exception.LinkedEntityExistsException
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -9,7 +10,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 
-@RequestMapping("/api")
+//@RequestMapping("/api")
 abstract class CrudController<D : Dto>(
     private val crudService: CrudService<D, *>
 ) {
@@ -23,6 +24,11 @@ abstract class CrudController<D : Dto>(
     fun delete(@PathVariable id: Long) {
         try {
             crudService.delete(id)
+        } catch (e: LinkedEntityExistsException) {
+            throw ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                e.message ?: "Невозможно удалить запись с id=$id: существуют связанные данные"
+            )
         } catch (e: DataIntegrityViolationException) {
             throw ResponseStatusException(
                 HttpStatus.BAD_REQUEST,

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.orm.jpa.JpaTransactionManager
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean
 import org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter
+import org.springframework.transaction.support.TransactionTemplate
 import javax.sql.DataSource
 
 @Configuration
@@ -43,4 +44,8 @@ class JpaConfig {
     fun transactionManager(emf: EntityManagerFactory): JpaTransactionManager {
         return JpaTransactionManager(emf)
     }
+
+    @Bean
+    fun transactionTemplate(transactionManager: JpaTransactionManager): TransactionTemplate =
+        TransactionTemplate(transactionManager)
 }

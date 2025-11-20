@@ -31,4 +31,8 @@ interface PersonRepository : JpaRepository<PersonEntity, Long> {
     fun existsByLocationId(locationId: Long): Boolean
 
     fun findAllByLocationId(locationId: Long): List<PersonEntity>
+
+    fun existsByNameIgnoreCase(name: String): Boolean
+
+    fun existsByNameIgnoreCaseAndIdNot(name: String, id: Long): Boolean
 }

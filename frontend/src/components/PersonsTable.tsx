@@ -1,7 +1,13 @@
 // src/components/PersonsTable.tsx
 'use client'
 import React, { useMemo, useState } from "react";
-import { Person, PersonControllerApi } from "../api";
+import {
+    Person,
+    PersonControllerApi,
+    PersonEyeColorEnum,
+    PersonHairColorEnum,
+    PersonNationalityEnum
+} from "../api";
 import EditPersonDialog from "./EditPersonDialog";
 import {formatAnyDate} from "@/src/lib/dateUtils";
 import {TableCell} from "@/components/ui/table";
@@ -34,32 +40,24 @@ export default function PersonsTable({
     const [editing, setEditing] = useState<Person | null>(null);
     const [deletingId, setDeletingId] = useState<number | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const eyeOptions = Object.values(PersonEyeColorEnum ?? {}) as string[];
+    const hairOptions = Object.values(PersonHairColorEnum ?? {}) as string[];
+    const nationalityOptions = Object.values(PersonNationalityEnum ?? {}) as string[];
 
     // Apply filters (exact match on trimmed strings) and then sort
     const visible = useMemo(() => {
         let list = (data || []).slice();
 
-        // Filtering: only string columns, exact match (trim both sides)
+        const matchPartially = (value: string | undefined | null, filter: string) =>
+            value?.toString().toLowerCase().includes(filter.trim().toLowerCase());
+
+        // Filtering: enums exact, strings substring
         list = list.filter(p => {
-            // name
-            if (filters.name && (p.name ?? "").trim() !== filters.name.trim()) return false;
-            // eyeColor
-            if (filters.eyeColor && ((p.eyeColor ?? "") as any).toString().trim() !== filters.eyeColor.trim()) return false;
-            // hairColor (nullable)
-            if (filters.hairColor) {
-                const hv = p.hairColor ? (p.hairColor as any).toString().trim() : "";
-                if (hv !== filters.hairColor.trim()) return false;
-            }
-            // nationality (nullable)
-            if (filters.nationality) {
-                const nv = p.nationality ? (p.nationality as any).toString().trim() : "";
-                if (nv !== filters.nationality.trim()) return false;
-            }
-            // location.name (nullable possible)
-            if (filters.locationName) {
-                const ln = p.location?.name ? p.location.name.trim() : "";
-                if (ln !== filters.locationName.trim()) return false;
-            }
+            if (filters.name && !matchPartially(p.name, filters.name)) return false;
+            if (filters.eyeColor && (p.eyeColor ?? "") !== filters.eyeColor) return false;
+            if (filters.hairColor && (p.hairColor ?? "") !== filters.hairColor) return false;
+            if (filters.nationality && (p.nationality ?? "") !== filters.nationality) return false;
+            if (filters.locationName && !matchPartially(p.location?.name ?? "", filters.locationName)) return false;
             return true;
         });
 
@@ -157,27 +155,63 @@ export default function PersonsTable({
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 8 }}>
                     <div>
                         <div style={{ fontSize: 12 }}>name</div>
-                        <input value={filters.name} onChange={e => setFilters(f => ({ ...f, name: e.target.value }))} />
+                        <input
+                            className="border rounded px-2 py-1 bg-white focus-visible:ring-1 focus-visible:ring-primary/50"
+                            value={filters.name}
+                            onChange={e => setFilters(f => ({ ...f, name: e.target.value }))}
+                            placeholder="Введите часть имени"
+                        />
                     </div>
                     <div>
                         <div style={{ fontSize: 12 }}>eyeColor</div>
-                        <input value={filters.eyeColor} onChange={e => setFilters(f => ({ ...f, eyeColor: e.target.value }))} placeholder="GREEN/ORANGE/WHITE/BROWN" />
+                        <select
+                            value={filters.eyeColor}
+                            onChange={e => setFilters(f => ({ ...f, eyeColor: e.target.value }))}
+                            className="border rounded px-2 py-1 bg-white"
+                        >
+                            <option value="">—</option>
+                            {eyeOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                        </select>
                     </div>
                     <div>
                         <div style={{ fontSize: 12 }}>hairColor</div>
-                        <input value={filters.hairColor} onChange={e => setFilters(f => ({ ...f, hairColor: e.target.value }))} placeholder="or empty" />
+                        <select
+                            value={filters.hairColor}
+                            onChange={e => setFilters(f => ({ ...f, hairColor: e.target.value }))}
+                            className="border rounded px-2 py-1 bg-white"
+                        >
+                            <option value="">—</option>
+                            {hairOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                        </select>
                     </div>
                     <div>
                         <div style={{ fontSize: 12 }}>nationality</div>
-                        <input value={filters.nationality} onChange={e => setFilters(f => ({ ...f, nationality: e.target.value }))} placeholder="UNITED_KINGDOM/..." />
+                        <select
+                            value={filters.nationality}
+                            onChange={e => setFilters(f => ({ ...f, nationality: e.target.value }))}
+                            className="border rounded px-2 py-1 bg-white"
+                        >
+                            <option value="">—</option>
+                            {nationalityOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                        </select>
                     </div>
                     <div>
                         <div style={{ fontSize: 12 }}>location.name</div>
-                        <input value={filters.locationName} onChange={e => setFilters(f => ({ ...f, locationName: e.target.value }))} />
+                        <input
+                            className="border rounded px-2 py-1 bg-white focus-visible:ring-1 focus-visible:ring-primary/50"
+                            value={filters.locationName}
+                            onChange={e => setFilters(f => ({ ...f, locationName: e.target.value }))}
+                            placeholder="введите часть названия"
+                        />
                     </div>
 
                     <div style={{ alignSelf: 'end' }}>
-                        <button onClick={() => setFilters({ name: "", eyeColor: "", hairColor: "", locationName: "", nationality: "" })}>Сбросить</button>
+                        <button
+                            className="border rounded px-3 py-1 bg-white hover:bg-gray-100 transition-colors"
+                            onClick={() => setFilters({ name: "", eyeColor: "", hairColor: "", locationName: "", nationality: "" })}
+                        >
+                            Сбросить
+                        </button>
                     </div>
                 </div>
             </div>
@@ -208,7 +242,11 @@ export default function PersonsTable({
                     ) : visible.length === 0 ? (
                         <tr><td colSpan={11} style={{ padding: 20, textAlign: 'center' }}>Нет данных</td></tr>
                     ) : visible.map(p => (
-                        <tr key={p.id as any} style={{ borderTop: '1px solid #eee' }}>
+                        <tr
+                            key={p.id as any}
+                            style={{ borderTop: '1px solid #eee', cursor: onRowClick ? 'pointer' : 'default' }}
+                            onClick={() => onRowClick && onRowClick(p)}
+                        >
                             <td style={{ padding: 8 }}>{p.id}</td>
                             <td style={{ padding: 8 }}>{p.name}</td>
                             {/*<td style={{ padding: 8 }}>{formatAnyDate(p.creationDate)}</td>*/}
@@ -222,9 +260,25 @@ export default function PersonsTable({
                             <td style={{ padding: 8 }}>{p.coordinates?.y}</td>
                             <td style={{ padding: 8 }}>{p.location?.name}</td>
                             <td style={{ padding: 8, whiteSpace: 'nowrap' }}>
-                                <button onClick={() => onRowClick && onRowClick(p)}>View</button>
-                                <button style={{ marginLeft: 6 }} onClick={() => setEditing(p)}>Edit</button>
-                                <button style={{ marginLeft: 6 }} disabled={deletingId === p.id} onClick={() => handleDelete(p)}>{deletingId === p.id ? "Удаление..." : "Delete"}</button>
+                                <button
+                                    className="border rounded px-2 py-1 text-sm hover:bg-gray-100 transition-colors"
+                                    onClick={(e) => { e.stopPropagation(); onRowClick && onRowClick(p); }}
+                                >
+                                    View
+                                </button>
+                                <button
+                                    className="border rounded px-2 py-1 text-sm hover:bg-gray-100 transition-colors ml-2"
+                                    onClick={(e) => { e.stopPropagation(); setEditing(p); }}
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    className="border rounded px-2 py-1 text-sm ml-2 transition-colors bg-destructive/90 text-white hover:bg-destructive"
+                                    disabled={deletingId === p.id}
+                                    onClick={(e) => { e.stopPropagation(); handleDelete(p); }}
+                                >
+                                    {deletingId === p.id ? "Удаление..." : "Delete"}
+                                </button>
                             </td>
                         </tr>
                     ))}

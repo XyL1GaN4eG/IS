@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { API_BASE } from "@/src/lib/apiBase";
+import { USER_HEADERS } from "@/src/lib/userHeaders";
 import { Person } from "../api";
 
 type NotifyPayload = { type: 'success' | 'error'; message: string };
@@ -32,7 +33,7 @@ export default function SpecialOperationsPanel({ onDone, onNotify }: { onDone?: 
         setHeightError(null);
         setLoading(true);
         try {
-            const res = await fetch(`${API_BASE}/persons/by-height?height=${encodeURIComponent(String(h))}`, { method: "DELETE", credentials: "include" });
+            const res = await fetch(`${API_BASE}/persons/by-height?height=${encodeURIComponent(String(h))}`, { method: "DELETE", credentials: "include", headers: USER_HEADERS });
             if (!res.ok) throw new Error(await res.text());
             const deleted = Number(await res.json());
             notify({ type: 'success', message: deleted > 0 ? `Удалено ${deleted} записей` : "Совпадений не найдено" });
@@ -45,7 +46,7 @@ export default function SpecialOperationsPanel({ onDone, onNotify }: { onDone?: 
     async function getMaxIdPerson() {
         setLoading(true);
         try {
-            const res = await fetch(`${API_BASE}/persons/max-id`, { credentials: "include" });
+            const res = await fetch(`${API_BASE}/persons/max-id`, { credentials: "include", headers: USER_HEADERS });
             if (!res.ok) throw new Error(await res.text());
             const p = await res.json();
             setMaxPerson(p);
@@ -57,7 +58,7 @@ export default function SpecialOperationsPanel({ onDone, onNotify }: { onDone?: 
     async function getUniqueHeights() {
         setLoading(true);
         try {
-            const res = await fetch(`${API_BASE}/persons/unique-heights`, { credentials: "include" });
+            const res = await fetch(`${API_BASE}/persons/unique-heights`, { credentials: "include", headers: USER_HEADERS });
             if (!res.ok) throw new Error(await res.text());
             const arr = await res.json();
             setUniqueHeights(arr || []);
@@ -69,7 +70,7 @@ export default function SpecialOperationsPanel({ onDone, onNotify }: { onDone?: 
     async function getCountByEyeColor() {
         setLoading(true);
         try {
-            const res = await fetch(`${API_BASE}/persons/count-by-eye-color?eyeColor=${encodeURIComponent(eyeColor)}`, { credentials: "include" });
+            const res = await fetch(`${API_BASE}/persons/count-by-eye-color?eyeColor=${encodeURIComponent(eyeColor)}`, { credentials: "include", headers: USER_HEADERS });
             if (!res.ok) throw new Error(await res.text());
             const cnt = Number(await res.text());
             setEyeStats(prev => ({ ...prev, count: cnt }));
@@ -81,7 +82,7 @@ export default function SpecialOperationsPanel({ onDone, onNotify }: { onDone?: 
     async function getShareByEyeColor() {
         setLoading(true);
         try {
-            const res = await fetch(`${API_BASE}/persons/share-by-eye-color?eyeColor=${encodeURIComponent(eyeColor)}`, { credentials: "include" });
+            const res = await fetch(`${API_BASE}/persons/share-by-eye-color?eyeColor=${encodeURIComponent(eyeColor)}`, { credentials: "include", headers: USER_HEADERS });
             if (!res.ok) throw new Error(await res.text());
             const pct = Number(await res.text());
             setEyeStats(prev => ({ ...prev, share: pct }));
@@ -103,7 +104,7 @@ export default function SpecialOperationsPanel({ onDone, onNotify }: { onDone?: 
                         <Input
                             className="bg-white"
                             value={height}
-                            onChange={e => setHeight(e.target.value)}
+                            onChange={e => { setHeight(e.target.value); setHeightError(null); }}
                             placeholder="Например, 175"
                         />
                         {heightError && <p className="text-red-600 text-sm mt-1">{heightError}</p>}

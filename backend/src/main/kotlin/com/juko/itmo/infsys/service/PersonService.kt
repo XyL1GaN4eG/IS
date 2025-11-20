@@ -27,6 +27,14 @@ class PersonService(
     private val coordinatesRepository: CoordinatesRepository,
     private val locationRepository: LocationRepository,
 ) : CrudService<Person, PersonEntity>(repository, mapper) {
+    private fun ensureUniqueName(name: String, ignoreId: Long? = null) {
+        val exists = ignoreId?.let {
+            repository.existsByNameIgnoreCaseAndIdNot(name, it)
+        } ?: repository.existsByNameIgnoreCase(name)
+        if (exists) {
+            throw IllegalArgumentException("Персонаж с именем \"$name\" уже существует")
+        }
+    }
 
     private fun resolveCoordinates(dto: Coordinates): CoordinatesEntity =
         dto.id?.let { id ->
@@ -55,6 +63,7 @@ class PersonService(
 
     @Transactional
     override fun create(dto: Person): Person {
+        ensureUniqueName(dto.name)
         val entity = PersonEntity(
             name = dto.name,
             authorId = 1L,
@@ -74,6 +83,7 @@ class PersonService(
     @Transactional
     fun update(id: Long, dto: Person): Person {
         val existing = repository.findById(id).orElseThrow { NoSuchElementException("Person not found: $id") }
+        ensureUniqueName(dto.name, id)
         existing.name = dto.name
         existing.coordinates = resolveCoordinates(dto.coordinates)
         existing.eyeColor = dto.eyeColor

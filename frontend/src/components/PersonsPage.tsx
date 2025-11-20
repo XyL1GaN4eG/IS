@@ -5,12 +5,14 @@ import usePersonsRealtime from "@/src/hooks/usePersonsRealtime";
 import { Button } from "@/components/ui/button";
 import SpecialOperationsPanel from "./SpecialOperationsPanel";
 import CreatePersonForm from "./CreatePersonForm";
+import ImportPanel from "./ImportPanel";
 import {
     Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose
 } from "@/components/ui/dialog";
 import PersonDetail from "@/src/components/PersonDetails";
 import { Person } from "../api";
 import { API_BASE } from "@/src/lib/apiBase";
+import { USER_HEADERS } from "@/src/lib/userHeaders";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 type PageResp<T> = {
@@ -51,7 +53,7 @@ export default function PersonsPage() {
             u.searchParams.set("size", String(s));
             // при необходимости: u.searchParams.append("sort", "name,asc")
 
-            const res = await fetch(u.toString(), { credentials: "include" });
+            const res = await fetch(u.toString(), { credentials: "include", headers: USER_HEADERS });
             if (!res.ok) throw new Error(await res.text());
 
             const json: PageResp<Person> = await res.json();
@@ -63,7 +65,7 @@ export default function PersonsPage() {
                 const u2 = new URL(`${API_BASE}/persons`);
                 u2.searchParams.set("page", String(json.totalPages - 1));
                 u2.searchParams.set("size", String(s));
-                const res2 = await fetch(u2.toString(), { credentials: "include" });
+                const res2 = await fetch(u2.toString(), { credentials: "include", headers: USER_HEADERS });
                 const j2: PageResp<Person> = await res2.json();
                 setPersons(j2.content ?? []);
                 setTotalPages(j2.totalPages ?? 0);
@@ -150,16 +152,7 @@ export default function PersonsPage() {
                 </Card>
 
                 <div className="flex flex-col gap-6">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Быстрые действия</CardTitle>
-                            <CardDescription>Создавайте записи и запускайте отчёты.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <Button className="w-full" onClick={() => setShowCreate(true)}>Создать нового персонажа</Button>
-                        </CardContent>
-                    </Card>
-
+                    <ImportPanel onImported={() => loadPage(0, size)} onNotify={handleOperationFeedback} />
                     <SpecialOperationsPanel
                         onDone={() => loadPage(0, size)}
                         onNotify={handleOperationFeedback}

@@ -1,6 +1,7 @@
 package com.juko.itmo.infsys.controller
 
 import com.juko.itmo.infsys.data.model.Color
+import com.juko.itmo.infsys.data.model.ImportJobType
 import com.juko.itmo.infsys.data.model.dto.ImportJobDto
 import com.juko.itmo.infsys.data.model.dto.Person
 import com.juko.itmo.infsys.service.ImportService
@@ -49,5 +50,12 @@ class PersonController(
 
     @GetMapping("/imports")
     fun history(@RequestParam(required = false) scope: String?): List<ImportJobDto> =
-        importService.history(scope)
+        importService.history(ImportJobType.PERSON, scope)
+
+    @GetMapping("/check-name")
+    fun checkName(
+        @RequestParam name: String,
+        @RequestParam(required = false) excludeId: Long?
+    ): Map<String, Boolean> =
+        mapOf("available" to !service.isNameTaken(name, excludeId))
 }

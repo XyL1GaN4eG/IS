@@ -13,10 +13,51 @@ export default function CreateLocationForm({ onCreated }: { onCreated?: (locatio
     const [z, setZ] = useState("");
     const [name, setName] = useState("");
     const [errors, setErrors] = useState<Record<string, string>>({});
+    const [touched, setTouched] = useState<Record<string, boolean>>({});
     const [loading, setLoading] = useState(false);
     const [createdLocation, setCreatedLocation] = useState<Location | null>(null);
 
+    const touchField = (field: string) => setTouched(prev => ({ ...prev, [field]: true }));
+
+    const setFieldError = (field: string, message?: string) => {
+        setErrors(prev => {
+            const next = { ...prev };
+            if (message) next[field] = message; else delete next[field];
+            return next;
+        });
+    };
+
+    const validateField = (field: string, value: string) => {
+        switch (field) {
+            case "x": {
+                const xv = parseInt(value, 10);
+                if (Number.isNaN(xv)) setFieldError(field, "x должно быть целым числом");
+                else setFieldError(field);
+                break;
+            }
+            case "y": {
+                const yv = parseFloat(value);
+                if (!isFinite(yv)) setFieldError(field, "y должно быть числом");
+                else setFieldError(field);
+                break;
+            }
+            case "z": {
+                const zv = parseInt(value, 10);
+                if (Number.isNaN(zv)) setFieldError(field, "z должно быть целым числом");
+                else setFieldError(field);
+                break;
+            }
+            case "name":
+                if (value.trim().length === 0) setFieldError(field, "Название обязательно");
+                else setFieldError(field);
+                break;
+            default:
+                break;
+        }
+    };
+
     function validate(): boolean {
+        ["x", "y", "z", "name"].forEach(field => touchField(field));
         const e: Record<string, string> = {};
         const xv = parseInt(x, 10);
         const yv = parseFloat(y);
@@ -59,25 +100,25 @@ export default function CreateLocationForm({ onCreated }: { onCreated?: (locatio
             <div className="grid grid-cols-3 gap-4">
                 <div>
                     <Label htmlFor="x">x</Label>
-                    <Input id="x" value={x} onChange={e => setX(e.target.value)} />
-                    {errors.x && <p className="text-red-600 text-sm">{errors.x}</p>}
+                    <Input id="x" className="bg-white" value={x} onChange={e => { setX(e.target.value); touchField("x"); validateField("x", e.target.value); }} />
+                    {errors.x && touched.x && <p className="text-red-600 text-sm">{errors.x}</p>}
                 </div>
                 <div>
                     <Label htmlFor="y">y</Label>
-                    <Input id="y" value={y} onChange={e => setY(e.target.value)} />
-                    {errors.y && <p className="text-red-600 text-sm">{errors.y}</p>}
+                    <Input id="y" className="bg-white" value={y} onChange={e => { setY(e.target.value); touchField("y"); validateField("y", e.target.value); }} />
+                    {errors.y && touched.y && <p className="text-red-600 text-sm">{errors.y}</p>}
                 </div>
                 <div>
                     <Label htmlFor="z">z</Label>
-                    <Input id="z" value={z} onChange={e => setZ(e.target.value)} />
-                    {errors.z && <p className="text-red-600 text-sm">{errors.z}</p>}
+                    <Input id="z" className="bg-white" value={z} onChange={e => { setZ(e.target.value); touchField("z"); validateField("z", e.target.value); }} />
+                    {errors.z && touched.z && <p className="text-red-600 text-sm">{errors.z}</p>}
                 </div>
             </div>
 
             <div>
                 <Label htmlFor="name">Название</Label>
-                <Input id="name" value={name} onChange={e => setName(e.target.value)} />
-                {errors.name && <p className="text-red-600 text-sm">{errors.name}</p>}
+                    <Input id="name" className="bg-white" value={name} onChange={e => { setName(e.target.value); touchField("name"); validateField("name", e.target.value); }} />
+                    {errors.name && touched.name && <p className="text-red-600 text-sm">{errors.name}</p>}
             </div>
 
             {errors.server && <p className="text-red-600 text-sm">{errors.server}</p>}

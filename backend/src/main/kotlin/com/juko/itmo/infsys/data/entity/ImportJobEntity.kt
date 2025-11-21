@@ -1,5 +1,6 @@
 package com.juko.itmo.infsys.data.entity
 
+import com.juko.itmo.infsys.data.model.ImportJobType
 import com.juko.itmo.infsys.data.model.ImportStatus
 import jakarta.persistence.*
 import java.time.OffsetDateTime
@@ -16,6 +17,10 @@ class ImportJobEntity(
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     var status: ImportStatus = ImportStatus.IN_PROGRESS,
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "job_type", nullable = false)
+    var jobType: ImportJobType,
 
     @Column(name = "created_at", nullable = false)
     var createdAt: OffsetDateTime = OffsetDateTime.now(),

@@ -1,6 +1,6 @@
 // src/components/CreatePersonForm.tsx
 'use client'
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
     Person, PersonControllerApi,
     PersonEyeColorEnum, PersonHairColorEnum, PersonNationalityEnum
@@ -11,6 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import CoordinatesPicker from "@/src/components/CoordinatesPicker";
 import LocationPicker from "@/src/components/LocationPicker";
+import { API_BASE } from "@/src/lib/apiBase";
+import { USER_HEADERS } from "@/src/lib/userHeaders";
 
 const api = new PersonControllerApi();
 const NONE = '__NONE__';
@@ -40,6 +42,8 @@ export default function CreatePersonForm({ onCreated }: { onCreated?: (person: P
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [touched, setTouched] = useState<Record<string, boolean>>({});
     const [loading, setLoading] = useState(false);
+    const [nameStatus, setNameStatus] = useState<"idle" | "checking" | "available" | "taken">("idle");
+    const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
     const eyeOptions = Object.values(PersonEyeColorEnum);
     const hairOptions = Object.values(PersonHairColorEnum);
@@ -112,12 +116,16 @@ export default function CreatePersonForm({ onCreated }: { onCreated?: (person: P
         const fieldsToCheck = ['name', 'height'];
         if (!useExistingCoords) fieldsToCheck.push('coordX', 'coordY');
         if (!useExistingLocation) fieldsToCheck.push('locX', 'locY', 'locZ', 'locName');
-        fieldsToCheck.forEach(f => validateField(f));
+        fieldsToCheck.forEach(f => {
+            touchField(f);
+            validateField(f);
+        });
 
         const e: Record<string, string> = {};
         if (name.trim().length < 2 || name.trim().length > 128) e.name = "Имя должно быть длиной от 2 до 128 символов";
         const h = parseFloat(height);
         if (!isFinite(h) || h <= 0) e.height = "Рост должен быть числом больше 0";
+        if (nameStatus === "taken") e.nameUnique = "Имя должно быть уникальным";
 
         if (!eyeColor) e.eyeColor = "Выберите значение";
 
@@ -167,6 +175,48 @@ export default function CreatePersonForm({ onCreated }: { onCreated?: (person: P
         }
     }, [useExistingLocation]);
 
+    useEffect(() => {
+        const trimmed = name.trim();
+        if (debounceRef.current) clearTimeout(debounceRef.current);
+        if (trimmed.length < 2) {
+            setNameStatus("idle");
+            setErrors(prev => {
+                const next = { ...prev };
+                delete next.nameUnique;
+                return next;
+            });
+            return;
+        }
+        setNameStatus("checking");
+        debounceRef.current = setTimeout(async () => {
+            try {
+                const res = await fetch(`${API_BASE}/persons/check-name?name=${encodeURIComponent(trimmed)}`, {
+                    headers: { ...USER_HEADERS },
+                });
+                if (!res.ok) throw new Error(await res.text());
+                const json = await res.json();
+                if (json.available) {
+                    setNameStatus("available");
+                    setErrors(prev => {
+                        const next = { ...prev };
+                        delete next.nameUnique;
+                        return next;
+                    });
+                } else {
+                    setNameStatus("taken");
+                    setErrors(prev => ({ ...prev, nameUnique: "Имя уже используется другим персонажем" }));
+                }
+            } catch (err) {
+                console.error("Failed to check name", err);
+                setNameStatus("idle");
+            }
+        }, 400);
+
+        return () => {
+            if (debounceRef.current) clearTimeout(debounceRef.current);
+        };
+    }, [name]);
+
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         if (!validate()) return;
@@ -205,6 +255,7 @@ export default function CreatePersonForm({ onCreated }: { onCreated?: (person: P
             setLocId(null);
             setCoordX(""); setCoordY("");
             setLocX(""); setLocY(""); setLocZ(""); setLocName("");
+            setNameStatus("idle");
         } catch (err: any) {
             setErrors((p) => ({ ...p, server: err?.message || "Ошибка сервера" }));
         } finally {
@@ -215,12 +266,19 @@ export default function CreatePersonForm({ onCreated }: { onCreated?: (person: P
     return (
         <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
             <div>
-                <Label>Имя</Label>
+                <div className="flex items-center gap-2">
+                    <Label>Имя</Label>
+                    <span className="text-xs text-muted-foreground">— должно быть уникальным</span>
+                </div>
                 <Input
+                    className="bg-white"
                     value={name}
                     onChange={e => { setName(e.target.value); touchField('name'); validateField('name', e.target.value); }}
                 />
+                {nameStatus === "checking" && <p className="text-xs text-muted-foreground mt-1">Проверяем доступность...</p>}
+                {nameStatus === "available" && <p className="text-xs text-green-600 mt-1">Имя свободно</p>}
                 {errors.name && touched.name && <p className="text-red-600 text-sm">{errors.name}</p>}
+                {errors.nameUnique && <p className="text-red-600 text-sm">{errors.nameUnique}</p>}
             </div>
 
             {/* Coordinates */}

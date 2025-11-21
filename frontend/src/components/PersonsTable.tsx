@@ -244,7 +244,7 @@ export default function PersonsTable({
                     ) : visible.map(p => (
                         <tr
                             key={p.id as any}
-                            style={{ borderTop: '1px solid #eee', cursor: onRowClick ? 'pointer' : 'default' }}
+                            className={`border-t border-gray-100 transition-colors ${onRowClick ? "cursor-pointer hover:bg-gray-50" : ""}`}
                             onClick={() => onRowClick && onRowClick(p)}
                         >
                             <td style={{ padding: 8 }}>{p.id}</td>
@@ -261,23 +261,26 @@ export default function PersonsTable({
                             <td style={{ padding: 8 }}>{p.location?.name}</td>
                             <td style={{ padding: 8, whiteSpace: 'nowrap' }}>
                                 <button
+                                    type="button"
                                     className="border rounded px-2 py-1 text-sm hover:bg-gray-100 transition-colors"
                                     onClick={(e) => { e.stopPropagation(); onRowClick && onRowClick(p); }}
                                 >
-                                    View
+                                    Просмотр
                                 </button>
                                 <button
+                                    type="button"
                                     className="border rounded px-2 py-1 text-sm hover:bg-gray-100 transition-colors ml-2"
                                     onClick={(e) => { e.stopPropagation(); setEditing(p); }}
                                 >
-                                    Edit
+                                    Редактировать
                                 </button>
                                 <button
-                                    className="border rounded px-2 py-1 text-sm ml-2 transition-colors bg-destructive/90 text-white hover:bg-destructive"
+                                    type="button"
+                                    className="border rounded px-2 py-1 text-sm ml-2 transition-colors bg-destructive/90 text-white hover:bg-destructive disabled:opacity-70"
                                     disabled={deletingId === p.id}
                                     onClick={(e) => { e.stopPropagation(); handleDelete(p); }}
                                 >
-                                    {deletingId === p.id ? "Удаление..." : "Delete"}
+                                    {deletingId === p.id ? "Удаление..." : "Удалить"}
                                 </button>
                             </td>
                         </tr>

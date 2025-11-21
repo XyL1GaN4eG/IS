@@ -22,6 +22,7 @@ import {
     DialogHeader,
     DialogTitle
 } from "@/components/ui/dialog";
+import ImportPanel from "@/src/components/ImportPanel";
 
 type PersonsCache = Record<number, Person[]>;
 type ToastState = { type: "success" | "error"; message: string } | null;
@@ -107,10 +108,12 @@ export default function LocationsPage() {
 
     const selectedPersons = selectedLocation?.id ? personsCache[selectedLocation.id] : undefined;
 
-    const handleCreated = useCallback((location: Location) => {
+    const handleCreated = useCallback((location?: Location) => {
         setPage(0);
         loadPage(0, size);
-        showToast({ type: "success", message: `Локация "${location.name}" создана` });
+        if (location) {
+            showToast({ type: "success", message: `Локация "${location.name}" создана` });
+        }
     }, [loadPage, size, showToast]);
 
     const requestDelete = useCallback((loc: Location) => {
@@ -191,7 +194,12 @@ export default function LocationsPage() {
                             ) : locations.map(loc => {
                                 const isSelected = selectedLocation?.id === loc.id;
                                 return (
-                                    <TableRow key={loc.id} data-state={isSelected ? "selected" : undefined}>
+                                    <TableRow
+                                        key={loc.id}
+                                        data-state={isSelected ? "selected" : undefined}
+                                        className="cursor-pointer hover:bg-muted/40 transition-colors"
+                                        onClick={() => onSelect(loc)}
+                                    >
                                         <TableCell>{loc.id}</TableCell>
                                         <TableCell>{loc.x}</TableCell>
                                         <TableCell>{loc.y}</TableCell>
@@ -199,14 +207,15 @@ export default function LocationsPage() {
                                         <TableCell className="max-w-[220px] truncate">{loc.name}</TableCell>
                                         <TableCell className="text-right">
                                             <div className="flex justify-end gap-2">
-                                                <Button size="sm" variant={isSelected ? "default" : "outline"} onClick={() => onSelect(loc)}>
-                                                    {isSelected ? "Выбрана" : "Просмотр"}
+                                                <Button size="sm" variant={isSelected ? "default" : "outline"} onClick={(e) => { e.stopPropagation(); onSelect(loc); }}>
+                                                    Просмотр
                                                 </Button>
                                                 <Button
                                                     size="sm"
                                                     variant="destructive"
                                                     disabled={deletingId === loc.id}
-                                                    onClick={() => requestDelete(loc)}
+                                                    onClick={(e) => { e.stopPropagation(); requestDelete(loc); }}
+                                                    className="hover:opacity-90"
                                                 >
                                                     {deletingId === loc.id ? "Удаление..." : "Удалить"}
                                                 </Button>
@@ -243,6 +252,7 @@ export default function LocationsPage() {
                 </Card>
 
                 <div className="flex flex-col gap-6">
+                    <ImportPanel resource="location" onImported={handleCreated} onNotify={showToast} />
                     <Card>
                         <CardHeader className="pb-2">
                             <CardTitle>Создать локацию</CardTitle>

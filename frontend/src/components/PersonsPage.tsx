@@ -152,7 +152,7 @@ export default function PersonsPage() {
                 </Card>
 
                 <div className="flex flex-col gap-6">
-                    <ImportPanel onImported={() => loadPage(0, size)} onNotify={handleOperationFeedback} />
+                    <ImportPanel resource="persons" onImported={() => loadPage(0, size)} onNotify={handleOperationFeedback} />
                     <SpecialOperationsPanel
                         onDone={() => loadPage(0, size)}
                         onNotify={handleOperationFeedback}
@@ -162,13 +162,13 @@ export default function PersonsPage() {
 
             {/* Диалог создания */}
             <Dialog open={showCreate} onOpenChange={open => setShowCreate(open)}>
-                <DialogContent>
+                <DialogContent showCloseButton={false}>
                     <DialogHeader><DialogTitle>Создать персонажа</DialogTitle></DialogHeader>
                     <div className="p-4">
                         <CreatePersonForm onCreated={onCreated} />
                     </div>
                     <DialogClose asChild>
-                        <button className="absolute top-2 right-2">×</button>
+                        <button className="absolute top-2 right-2 text-2xl leading-none">&times;</button>
                     </DialogClose>
                 </DialogContent>
             </Dialog>
@@ -178,7 +178,7 @@ export default function PersonsPage() {
 
 {/* Просмотр/детали персонажа */}
             <Dialog open={!!selectedPerson} onOpenChange={open => { if (!open) setSelectedPerson(null); }}>
-                <DialogContent>
+                <DialogContent showCloseButton={false}>
                     <DialogHeader>
                         <DialogTitle>Информация о персонаже</DialogTitle>
                     </DialogHeader>
@@ -192,7 +192,7 @@ export default function PersonsPage() {
                         </div>
                     )}
                     <DialogClose asChild>
-                        <button className="absolute top-2 right-2">×</button>
+                        <button className="absolute top-2 right-2 text-2xl leading-none">&times;</button>
                     </DialogClose>
                 </DialogContent>
             </Dialog>

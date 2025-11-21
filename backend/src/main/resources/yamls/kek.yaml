@@ -1,0 +1,9 @@
+locations:
+  - name: Firenze
+    x: 1
+    y: 2.2
+    z: 3
+  - name: Milan
+    x: 5
+    y: 9.1
+    z: 10

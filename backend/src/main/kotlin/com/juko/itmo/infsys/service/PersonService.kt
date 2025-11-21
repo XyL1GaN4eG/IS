@@ -36,6 +36,10 @@ class PersonService(
         }
     }
 
+    fun isNameTaken(name: String, ignoreId: Long? = null): Boolean =
+        ignoreId?.let { repository.existsByNameIgnoreCaseAndIdNot(name, it) }
+            ?: repository.existsByNameIgnoreCase(name)
+
     private fun resolveCoordinates(dto: Coordinates): CoordinatesEntity =
         dto.id?.let { id ->
             coordinatesRepository.findById(id)

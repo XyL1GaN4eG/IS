@@ -1,0 +1,21 @@
+timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success,failureMessage,bytes,sentBytes,grpThreads,allThreads,URL,Latency,IdleTime,Connect
+1763715542703,588,POST /persons (seed),200,,Seed Data 1-1,text,true,,523,398,1,1,http://localhost:43261/persons,583,0,10
+1763715543338,224,GET /persons,200,,Admins 3-1,text,true,,1695,195,1,3,http://localhost:43261/persons?page=0&size=5,224,0,1
+1763715543336,254,POST /persons,200,,RegularUsers 2-1,text,true,,497,391,1,3,http://localhost:43261/persons,254,0,1
+1763715543562,197,POST /location/import,400,,Admins 3-1,text,false,,339,323,1,4,http://localhost:43261/location/import,197,0,2
+1763715543575,202,PUT /persons/{seed},404,,ConcurrentOps 1-1,text,false,,330,373,1,4,http://localhost:43261/persons/,202,0,1
+1763715543591,200,PUT /persons/{id},404,,RegularUsers 2-1,text,false,,330,378,2,4,http://localhost:43261/persons/,200,0,0
+1763715543673,234,POST /persons,200,,RegularUsers 2-2,text,true,,497,391,2,5,http://localhost:43261/persons,233,0,1
+1763715543785,213,DELETE /persons/{seed},404,,ConcurrentOps 1-1,text,false,,330,204,2,5,http://localhost:43261/persons/,213,0,0
+1763715543791,207,DELETE /persons/{id},404,,RegularUsers 2-1,text,false,,330,204,2,5,http://localhost:43261/persons/,207,0,1
+1763715543760,240,GET /location/imports,200,,Admins 3-1,text,true,,453,200,1,4,http://localhost:43261/location/imports?scope=all,240,0,0
+1763715543840,196,PUT /persons/{seed},404,,ConcurrentOps 1-2,text,false,,330,373,1,4,http://localhost:43261/persons/,196,0,1
+1763715543908,188,PUT /persons/{id},404,,RegularUsers 2-2,text,false,,330,378,3,4,http://localhost:43261/persons/,188,0,2
+1763715544000,228,POST /persons/import,400,,RegularUsers 2-1,text,false,,338,322,3,4,http://localhost:43261/persons/import,228,0,2
+1763715544037,192,DELETE /persons/{seed},404,,ConcurrentOps 1-2,text,false,,330,204,1,4,http://localhost:43261/persons/,192,0,0
+1763715544009,244,POST /persons,200,,RegularUsers 2-3,text,true,,497,391,2,2,http://localhost:43261/persons,244,0,1
+1763715544098,225,DELETE /persons/{id},404,,RegularUsers 2-2,text,false,,330,204,2,2,http://localhost:43261/persons/,224,0,2
+1763715544256,232,PUT /persons/{id},404,,RegularUsers 2-3,text,false,,330,378,2,2,http://localhost:43261/persons/,231,0,1
+1763715544324,253,POST /persons/import,400,,RegularUsers 2-2,text,false,,338,322,2,2,http://localhost:43261/persons/import,252,0,3
+1763715544490,224,DELETE /persons/{id},404,,RegularUsers 2-3,text,false,,330,204,1,1,http://localhost:43261/persons/,223,0,1
+1763715544716,200,POST /persons/import,400,,RegularUsers 2-3,text,false,,338,304,1,1,http://localhost:43261/persons/import,199,0,3

@@ -18,7 +18,10 @@ type ImportJob = {
     errorMessage?: string;
 };
 
-export default function ImportPanel({ onImported, onNotify }: {
+type ImportResource = "persons" | "location";
+
+export default function ImportPanel({ resource = "persons", onImported, onNotify }: {
+    resource?: ImportResource;
     onImported?: () => void;
     onNotify?: (payload: NotifyPayload) => void;
 }) {
@@ -28,13 +31,14 @@ export default function ImportPanel({ onImported, onNotify }: {
     const [scope, setScope] = useState<UserScope>("own");
     const [loadingHistory, setLoadingHistory] = useState(false);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const scopeRef = useRef(scope);
 
     const notify = useCallback((payload: NotifyPayload) => onNotify && onNotify(payload), [onNotify]);
 
     const loadHistory = useCallback(async (currentScope: UserScope) => {
         setLoadingHistory(true);
         try {
-            const res = await fetch(`${API_BASE}/persons/imports?scope=${currentScope}`, {
+            const res = await fetch(`${API_BASE}/${resource}/imports?scope=${currentScope}`, {
                 credentials: "include",
                 headers: USER_HEADERS,
             });
@@ -46,9 +50,29 @@ export default function ImportPanel({ onImported, onNotify }: {
         } finally {
             setLoadingHistory(false);
         }
-    }, [notify]);
+    }, [notify, resource]);
 
     useEffect(() => { loadHistory(scope); }, [scope, loadHistory]);
+
+    useEffect(() => {
+        scopeRef.current = scope;
+    }, [scope]);
+
+    useEffect(() => {
+        const es = new EventSource(`${API_BASE}/imports/stream`);
+        const handler = () => loadHistory(scopeRef.current);
+        es.addEventListener(`import_${resource}`, handler);
+        es.onerror = () => {
+            setTimeout(() => {
+                es.close();
+                loadHistory(scopeRef.current);
+            }, 2000);
+        };
+        return () => {
+            es.removeEventListener(`import_${resource}`, handler);
+            es.close();
+        };
+    }, [resource, loadHistory]);
 
     async function handleUpload() {
         if (!file) {
@@ -59,7 +83,7 @@ export default function ImportPanel({ onImported, onNotify }: {
         try {
             const form = new FormData();
             form.append("file", file);
-            const res = await fetch(`${API_BASE}/persons/import`, {
+            const res = await fetch(`${API_BASE}/${resource}/import`, {
                 method: "POST",
                 body: form,
                 credentials: "include",
@@ -81,7 +105,9 @@ export default function ImportPanel({ onImported, onNotify }: {
         <Card>
             <CardHeader>
                 <CardTitle>Импорт из YAML</CardTitle>
-                <CardDescription>Загрузите файл с массивом persons и просматривайте историю операций.</CardDescription>
+                <CardDescription>
+                    Загрузите файл с массивом {resource === "persons" ? "persons" : "locations"} и просматривайте историю операций.
+                </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
                 <div className="space-y-2">

@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull
 
 @Entity
 @Table(name = "coordinates")
+@Cacheable
 class CoordinatesEntity(
     @NotNull
     @field:Min(-916, message = "x must be > -917")

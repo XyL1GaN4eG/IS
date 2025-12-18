@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull
 
 @Entity
 @Table(name = "location")
+@Cacheable
 class LocationEntity(
     @field:NotNull
     @Column(name = "loc_x", nullable = false)

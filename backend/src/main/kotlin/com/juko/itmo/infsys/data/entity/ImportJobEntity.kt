@@ -7,6 +7,7 @@ import java.time.OffsetDateTime
 
 @Entity
 @Table(name = "import_job")
+@Cacheable
 class ImportJobEntity(
     @Column(name = "username", nullable = false)
     var username: String,

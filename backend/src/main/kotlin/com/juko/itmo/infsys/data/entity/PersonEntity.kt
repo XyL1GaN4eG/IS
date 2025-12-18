@@ -9,6 +9,7 @@ import java.time.ZonedDateTime
 
 @Entity
 @Table(name = "person")
+@Cacheable
 class PersonEntity(
     @Column(name = "name", nullable = false)
     @NotBlank(message = "Name may not be empty")

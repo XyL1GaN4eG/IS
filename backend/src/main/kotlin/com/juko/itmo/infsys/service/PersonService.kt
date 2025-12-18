@@ -26,8 +26,10 @@ class PersonService(
     private val sseService: SseService,
     private val coordinatesRepository: CoordinatesRepository,
     private val locationRepository: LocationRepository,
+    private val advisoryLockService: AdvisoryLockService,
 ) : CrudService<Person, PersonEntity>(repository, mapper) {
     private fun ensureUniqueName(name: String, ignoreId: Long? = null) {
+        advisoryLockService.lockPersonName(name)
         val exists = ignoreId?.let {
             repository.existsByNameIgnoreCaseAndIdNot(name, it)
         } ?: repository.existsByNameIgnoreCase(name)
@@ -118,25 +120,19 @@ class PersonService(
         return count
     }
 
-    fun getPersonWithMaxId() =
-        repository.findPersonWithMaxId()?.let {
-            mapper.toDto(
-                repository.findById(it.id.let { it -> it ?: throw NoSuchElementException(":(") })
-                    .orElseThrow()
-            )
-        }
+    fun getPersonWithMaxId(): Person? {
+        val maxId = repository.findMaxId() ?: return null
+        return mapper.toDto(repository.findById(maxId).orElseThrow { NoSuchElementException("Person not found: $maxId") })
+    }
 
     fun getUniqueHeights() =
         repository.findDistinctHeights()
 
     fun countByEyeColor(eyeColor: Color) =
-        repository.countByEyeColor(eyeColor)
+        repository.countByEyeColor(eyeColor.name)
 
     fun shareByEyeColor(eyeColor: Color): Double {
-        val total = repository.totalCount()
-        if (total == 0L) return 0.0
-        val count = repository.countByEyeColor(eyeColor)
-        return (count.toDouble() * 100.0) / total.toDouble()
+        return repository.shareByEyeColor(eyeColor.name)
     }
 
     fun findByLocationId(locationId: Long): List<Person> =

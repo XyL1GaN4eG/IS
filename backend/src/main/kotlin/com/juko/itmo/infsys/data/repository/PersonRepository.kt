@@ -1,32 +1,28 @@
 package com.juko.itmo.infsys.data.repository
 
 import com.juko.itmo.infsys.data.entity.PersonEntity
-import com.juko.itmo.infsys.data.model.Color
 import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
-import org.springframework.transaction.annotation.Transactional
 
 @Repository
 interface PersonRepository : JpaRepository<PersonEntity, Long> {
 
-    @Modifying
-    @Transactional
-    @Query("delete from PersonEntity p where p.height = :height")
+    @Query(value = "select person_delete_by_height(:height)", nativeQuery = true)
     fun deleteByHeight(@Param("height") height: Double): Int
 
-    @Query("select p from PersonEntity p where p.id = (select max(p2.id) from PersonEntity p2)")
-    fun findPersonWithMaxId(): PersonEntity?
+    @Query(value = "select person_max_id()", nativeQuery = true)
+    fun findMaxId(): Long?
 
-    @Query("select distinct p.height from PersonEntity p")
+    @Query(value = "select * from person_unique_heights()", nativeQuery = true)
     fun findDistinctHeights(): List<Double>
 
-    fun countByEyeColor(eyeColor: Color): Long
+    @Query(value = "select person_count_by_eye_color(:eyeColor)", nativeQuery = true)
+    fun countByEyeColor(@Param("eyeColor") eyeColor: String): Long
 
-    @Query("select count(p) from PersonEntity p")
-    fun totalCount(): Long
+    @Query(value = "select person_share_by_eye_color(:eyeColor)", nativeQuery = true)
+    fun shareByEyeColor(@Param("eyeColor") eyeColor: String): Double
 
     fun existsByLocationId(locationId: Long): Boolean
 

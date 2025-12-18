@@ -14,27 +14,26 @@
     </cache-template>
 
     <cache alias="com.juko.itmo.infsys.data.entity.PersonEntity" uses-template="default">
-        <key-type>java.lang.Long</key-type>
-        <value-type>com.juko.itmo.infsys.data.entity.PersonEntity</value-type>
+        <key-type>java.lang.Object</key-type>
+        <value-type>java.lang.Object</value-type>
     </cache>
 
     <cache alias="com.juko.itmo.infsys.data.entity.LocationEntity" uses-template="default">
-        <key-type>java.lang.Long</key-type>
-        <value-type>com.juko.itmo.infsys.data.entity.LocationEntity</value-type>
+        <key-type>java.lang.Object</key-type>
+        <value-type>java.lang.Object</value-type>
     </cache>
 
     <cache alias="com.juko.itmo.infsys.data.entity.CoordinatesEntity" uses-template="default">
-        <key-type>java.lang.Long</key-type>
-        <value-type>com.juko.itmo.infsys.data.entity.CoordinatesEntity</value-type>
+        <key-type>java.lang.Object</key-type>
+        <value-type>java.lang.Object</value-type>
     </cache>
 
     <cache alias="com.juko.itmo.infsys.data.entity.ImportJobEntity" uses-template="default">
-        <key-type>java.lang.Long</key-type>
-        <value-type>com.juko.itmo.infsys.data.entity.ImportJobEntity</value-type>
+        <key-type>java.lang.Object</key-type>
+        <value-type>java.lang.Object</value-type>
     </cache>
 
     <cache alias="default-query-results-region" uses-template="default"/>
     <cache alias="default-update-timestamps-region" uses-template="default"/>
 
 </config>
-

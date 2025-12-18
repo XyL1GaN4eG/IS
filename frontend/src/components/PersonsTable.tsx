@@ -48,16 +48,16 @@ export default function PersonsTable({
     const visible = useMemo(() => {
         let list = (data || []).slice();
 
-        const matchPartially = (value: string | undefined | null, filter: string) =>
-            value?.toString().toLowerCase().includes(filter.trim().toLowerCase());
+        const matchExactly = (value: string | undefined | null, filter: string) =>
+            value != null && value.toString().trim().toLowerCase() === filter.trim().toLowerCase();
 
-        // Filtering: enums exact, strings substring
+        // Filtering: enums exact, strings exact (case-insensitive)
         list = list.filter(p => {
-            if (filters.name && !matchPartially(p.name, filters.name)) return false;
+            if (filters.name && !matchExactly(p.name, filters.name)) return false;
             if (filters.eyeColor && (p.eyeColor ?? "") !== filters.eyeColor) return false;
             if (filters.hairColor && (p.hairColor ?? "") !== filters.hairColor) return false;
             if (filters.nationality && (p.nationality ?? "") !== filters.nationality) return false;
-            if (filters.locationName && !matchPartially(p.location?.name ?? "", filters.locationName)) return false;
+            if (filters.locationName && !matchExactly(p.location?.name ?? "", filters.locationName)) return false;
             return true;
         });
 
@@ -159,7 +159,7 @@ export default function PersonsTable({
                             className="border rounded px-2 py-1 bg-white focus-visible:ring-1 focus-visible:ring-primary/50"
                             value={filters.name}
                             onChange={e => setFilters(f => ({ ...f, name: e.target.value }))}
-                            placeholder="Введите часть имени"
+                            placeholder="Введите точное имя"
                         />
                     </div>
                     <div>
@@ -201,7 +201,7 @@ export default function PersonsTable({
                             className="border rounded px-2 py-1 bg-white focus-visible:ring-1 focus-visible:ring-primary/50"
                             value={filters.locationName}
                             onChange={e => setFilters(f => ({ ...f, locationName: e.target.value }))}
-                            placeholder="введите часть названия"
+                            placeholder="введите точное название"
                         />
                     </div>
 

@@ -16,13 +16,13 @@ abstract class CrudController<D : Dto>(
     private val crudService: CrudService<D, *>
 ) {
     @PostMapping
-    fun create(@Valid @RequestBody dto: D): D = crudService.create(dto)
+    open fun create(@Valid @RequestBody dto: D): D = crudService.create(dto)
 
     @GetMapping("/{id}")
-    fun read(@PathVariable id: Long): D = crudService.read(id)
+    open fun read(@PathVariable id: Long): D = crudService.read(id)
 
     @DeleteMapping("/{id}")
-    fun delete(@PathVariable id: Long) {
+    open fun delete(@PathVariable id: Long) {
         try {
             crudService.delete(id)
         } catch (e: LinkedEntityExistsException) {
@@ -39,5 +39,5 @@ abstract class CrudController<D : Dto>(
     }
 
     @GetMapping
-    fun list(pageable: Pageable): Page<D> = crudService.list(pageable)
+    open fun list(pageable: Pageable): Page<D> = crudService.list(pageable)
 }

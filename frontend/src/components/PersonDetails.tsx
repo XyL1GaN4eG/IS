@@ -76,7 +76,7 @@ export default function PersonDetail({ person, onClose, onUpdated }: {
 
             <div>
                 <b>Location:</b>
-                <div>x: {person.location.x}, y: {person.location.y}, z: {person.location.z}, name: {person.location.name}</div>
+                <div>x: {person.location.x}, y: {person.location.y}, z: {person.location.z}, name: {person.location.name ?? "—"}</div>
             </div>
 
             {error && <div className="text-red-600">{error}</div>}

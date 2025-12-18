@@ -26,7 +26,7 @@ data class LocationRecord(
     val x: Int,
     val y: Double,
     val z: Long,
-    val name: String,
+    val name: String? = null,
 )
 
 fun PersonImportRecord.toPersonDto(): Person =

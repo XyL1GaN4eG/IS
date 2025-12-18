@@ -48,8 +48,7 @@ export default function CreateLocationForm({ onCreated }: { onCreated?: (locatio
                 break;
             }
             case "name":
-                if (value.trim().length === 0) setFieldError(field, "Название обязательно");
-                else setFieldError(field);
+                setFieldError(field);
                 break;
             default:
                 break;
@@ -57,7 +56,7 @@ export default function CreateLocationForm({ onCreated }: { onCreated?: (locatio
     };
 
     function validate(): boolean {
-        ["x", "y", "z", "name"].forEach(field => touchField(field));
+        ["x", "y", "z"].forEach(field => touchField(field));
         const e: Record<string, string> = {};
         const xv = parseInt(x, 10);
         const yv = parseFloat(y);
@@ -65,7 +64,6 @@ export default function CreateLocationForm({ onCreated }: { onCreated?: (locatio
         if (isNaN(xv)) e.x = "x должно быть целым числом";
         if (isNaN(yv)) e.y = "y должно быть числом";
         if (isNaN(zv)) e.z = "z должно быть целым числом";
-        if (name.trim().length === 0) e.name = "Название обязательно";
         setErrors(e);
         return Object.keys(e).length === 0;
     }
@@ -78,7 +76,7 @@ export default function CreateLocationForm({ onCreated }: { onCreated?: (locatio
             x: parseInt(x, 10),
             y: parseFloat(y),
             z: parseInt(z, 10),
-            name: name.trim(),
+            name: name.trim() || null,
         };
 
         try {
@@ -116,7 +114,7 @@ export default function CreateLocationForm({ onCreated }: { onCreated?: (locatio
             </div>
 
             <div>
-                <Label htmlFor="name">Название</Label>
+                <Label htmlFor="name">Название (опц.)</Label>
                     <Input id="name" className="bg-white" value={name} onChange={e => { setName(e.target.value); touchField("name"); validateField("name", e.target.value); }} />
                     {errors.name && touched.name && <p className="text-red-600 text-sm">{errors.name}</p>}
             </div>

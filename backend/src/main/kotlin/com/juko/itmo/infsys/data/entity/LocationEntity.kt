@@ -2,6 +2,7 @@ package com.juko.itmo.infsys.data.entity
 
 import jakarta.persistence.*
 import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.Pattern
 
 @Entity
 @Table(name = "location")
@@ -20,6 +21,6 @@ class LocationEntity(
     var z: Long,
 
     @Column(name = "loc_name")
-    @field:NotNull
-    var name: String,
+    @field:Pattern(regexp = ".*\\S.*", message = "loc.name must not be blank")
+    var name: String? = null,
 ) : AbstractEntity()

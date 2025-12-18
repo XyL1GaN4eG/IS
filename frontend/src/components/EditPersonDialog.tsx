@@ -72,7 +72,6 @@ export default function EditPersonDialog({
         if (!Number.isInteger(lx)) e.locX = "loc.x — целое";
         if (!Number.isFinite(ly)) e.locY = "loc.y — число";
         if (!Number.isInteger(lz)) e.locZ = "loc.z — целое";
-        if (!locName.trim()) e.locName = "Название обязательно";
 
         setErrors(e);
         return Object.keys(e).length === 0;
@@ -88,7 +87,7 @@ export default function EditPersonDialog({
             x: Number(locX),
             y: Number(locY),
             z: Number(locZ),
-            name: locName.trim(),
+            name: locName.trim() || null,
         } as any;
 
         const payload: any = {
@@ -203,7 +202,7 @@ export default function EditPersonDialog({
                             {errors.locZ && <p className="text-red-600 text-sm">{errors.locZ}</p>}
                         </div>
                         <div className="col-span-4 sm:col-span-1">
-                            <Label htmlFor="lname">Название</Label>
+                            <Label htmlFor="lname">Название (опц.)</Label>
                             <Input id="lname" value={locName} onChange={e => setLocName(e.target.value)} />
                             {errors.locName && <p className="text-red-600 text-sm">{errors.locName}</p>}
                         </div>

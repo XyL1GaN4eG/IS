@@ -104,8 +104,7 @@ export default function CreatePersonForm({ onCreated }: { onCreated?: (person: P
                 break;
             }
             case 'locName':
-                if (!value || value.trim().length === 0) setFieldError(field, "Название обязательно");
-                else setFieldError(field);
+                setFieldError(field);
                 break;
             default:
                 break;
@@ -115,7 +114,7 @@ export default function CreatePersonForm({ onCreated }: { onCreated?: (person: P
     function validate(): boolean {
         const fieldsToCheck = ['name', 'height'];
         if (!useExistingCoords) fieldsToCheck.push('coordX', 'coordY');
-        if (!useExistingLocation) fieldsToCheck.push('locX', 'locY', 'locZ', 'locName');
+        if (!useExistingLocation) fieldsToCheck.push('locX', 'locY', 'locZ');
         fieldsToCheck.forEach(f => {
             touchField(f);
             validateField(f);
@@ -147,7 +146,6 @@ export default function CreatePersonForm({ onCreated }: { onCreated?: (person: P
             if (!Number.isInteger(lx)) e.locX = "loc.x целое";
             if (!isFinite(ly)) e.locY = "loc.y число";
             if (!Number.isInteger(lz)) e.locZ = "loc.z целое";
-            if (locName.trim().length === 0) e.locName = "loc.name обязателен";
         }
 
         const combined = { ...errors, ...e };
@@ -235,7 +233,7 @@ export default function CreatePersonForm({ onCreated }: { onCreated?: (person: P
                     x: parseInt(locX, 10),
                     y: parseFloat(locY),
                     z: parseInt(locZ, 10),
-                    name: locName.trim(),
+                    name: locName.trim() || null,
                 } as any),
             height: parseFloat(height),
             nationality: nationality ? (nationality as any) : null,
@@ -408,7 +406,7 @@ export default function CreatePersonForm({ onCreated }: { onCreated?: (person: P
                             </div>
                         </div>
                         <div>
-                            <Label>loc.name</Label>
+                            <Label>loc.name (опц.)</Label>
                             <Input
                                 className="bg-white"
                                 value={locName}

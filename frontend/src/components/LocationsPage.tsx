@@ -112,7 +112,7 @@ export default function LocationsPage() {
         setPage(0);
         loadPage(0, size);
         if (location) {
-            showToast({ type: "success", message: `Локация "${location.name}" создана` });
+            showToast({ type: "success", message: location.name ? `Локация "${location.name}" создана` : "Локация создана" });
         }
     }, [loadPage, size, showToast]);
 
@@ -274,7 +274,7 @@ export default function LocationsPage() {
                                     <div className="rounded border bg-muted/30 px-4 py-3 text-sm leading-6">
                                         <div><b>ID:</b> {selectedLocation.id}</div>
                                         <div><b>Координаты:</b> x={selectedLocation.x}, y={selectedLocation.y}, z={selectedLocation.z}</div>
-                                        <div><b>Название:</b> {selectedLocation.name}</div>
+                                        <div><b>Название:</b> {selectedLocation.name ?? "—"}</div>
                                     </div>
 
                                     {personsError && <div className="text-red-600 text-sm">{personsError}</div>}

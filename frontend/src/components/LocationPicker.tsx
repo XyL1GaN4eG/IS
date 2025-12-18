@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 const api = new LocationControllerApi();
 
 function labelFor(l: Location) {
-    return `#${l.id}  (x=${l.x}, y=${l.y}, z=${l.z}, name=${l.name})`;
+    return `#${l.id}  (x=${l.x}, y=${l.y}, z=${l.z}, name=${l.name ?? "—"})`;
 }
 
 export default function LocationPicker({

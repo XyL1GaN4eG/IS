@@ -1,0 +1,7 @@
+.gradle
+.idea
+build
+docs
+kls_database.db
+*.iml
+

@@ -34,6 +34,8 @@ dependencies {
     implementation("org.hibernate.orm:hibernate-jcache")
     implementation("org.ehcache:ehcache")
     implementation("javax.cache:cache-api")
+    implementation("javax.xml.bind:jaxb-api:2.3.1")
+    runtimeOnly("org.glassfish.jaxb:jaxb-runtime:2.3.9")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     runtimeOnly("org.postgresql:postgresql")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13")

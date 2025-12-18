@@ -11,6 +11,7 @@ type ImportJob = {
     id: number;
     username: string;
     fileName: string;
+    fileAvailable?: boolean;
     status: "IN_PROGRESS" | "SUCCESS" | "FAILED";
     createdAt: string;
     finishedAt?: string;
@@ -101,6 +102,28 @@ export default function ImportPanel({ resource = "persons", onImported, onNotify
         }
     }
 
+    async function handleDownload(job: ImportJob) {
+        try {
+            const res = await fetch(`${API_BASE}/imports/${job.id}/file`, {
+                credentials: "include",
+                headers: USER_HEADERS,
+            });
+            if (!res.ok) throw new Error(await res.text());
+
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = job.fileName || `import-${job.id}.yaml`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+        } catch (err: any) {
+            notify({ type: "error", message: err?.message || "Не удалось скачать файл импорта" });
+        }
+    }
+
     return (
         <Card>
             <CardHeader>
@@ -156,6 +179,16 @@ export default function ImportPanel({ resource = "persons", onImported, onNotify
                             </div>
                             <div>Файл: {job.fileName}</div>
                             <div>Пользователь: {job.username}</div>
+                            {job.fileAvailable && (
+                                <Button
+                                    variant="outline"
+                                    type="button"
+                                    className="mt-2"
+                                    onClick={() => handleDownload(job)}
+                                >
+                                    Скачать файл
+                                </Button>
+                            )}
                             {job.addedCount != null && <div>Добавлено объектов: {job.addedCount}</div>}
                             {job.errorMessage && (
                                 <div className="text-red-600">Ошибка: {job.errorMessage}</div>

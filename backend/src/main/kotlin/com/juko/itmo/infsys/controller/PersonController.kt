@@ -7,6 +7,7 @@ import com.juko.itmo.infsys.data.model.dto.Person
 import com.juko.itmo.infsys.service.ImportService
 import com.juko.itmo.infsys.service.PersonService
 import com.juko.itmo.infsys.service.SseService
+import jakarta.validation.Valid
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
@@ -20,7 +21,7 @@ class PersonController(
 ) : CrudController<Person>(service) {
 
     @PutMapping("/{id}")
-    fun update(@PathVariable id: Long, @RequestBody person: Person): Person {
+    fun update(@PathVariable id: Long, @Valid @RequestBody person: Person): Person {
         return service.update(id, person)
     }
 

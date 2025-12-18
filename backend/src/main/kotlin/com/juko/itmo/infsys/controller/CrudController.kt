@@ -3,6 +3,7 @@ package com.juko.itmo.infsys.controller
 import com.juko.itmo.infsys.data.model.dto.Dto
 import com.juko.itmo.infsys.service.abstraction.CrudService
 import com.juko.itmo.infsys.service.exception.LinkedEntityExistsException
+import jakarta.validation.Valid
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -15,7 +16,7 @@ abstract class CrudController<D : Dto>(
     private val crudService: CrudService<D, *>
 ) {
     @PostMapping
-    fun create(@RequestBody dto: D): D = crudService.create(dto)
+    fun create(@Valid @RequestBody dto: D): D = crudService.create(dto)
 
     @GetMapping("/{id}")
     fun read(@PathVariable id: Long): D = crudService.read(id)

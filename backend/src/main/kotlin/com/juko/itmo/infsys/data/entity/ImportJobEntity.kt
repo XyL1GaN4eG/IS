@@ -15,6 +15,9 @@ class ImportJobEntity(
     @Column(name = "file_name", nullable = false)
     var fileName: String,
 
+    @Column(name = "file_object_key")
+    var fileObjectKey: String? = null,
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     var status: ImportStatus = ImportStatus.IN_PROGRESS,

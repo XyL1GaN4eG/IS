@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.ehcache.org/v3"
+        xsi:schemaLocation="http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.0.xsd">
+
+    <cache-template name="default">
+        <expiry>
+            <ttl unit="minutes">30</ttl>
+        </expiry>
+        <resources>
+            <heap unit="entries">1000</heap>
+        </resources>
+    </cache-template>
+
+    <cache alias="com.juko.itmo.infsys.data.entity.PersonEntity" uses-template="default">
+        <key-type>java.lang.Long</key-type>
+        <value-type>com.juko.itmo.infsys.data.entity.PersonEntity</value-type>
+    </cache>
+
+    <cache alias="com.juko.itmo.infsys.data.entity.LocationEntity" uses-template="default">
+        <key-type>java.lang.Long</key-type>
+        <value-type>com.juko.itmo.infsys.data.entity.LocationEntity</value-type>
+    </cache>
+
+    <cache alias="com.juko.itmo.infsys.data.entity.CoordinatesEntity" uses-template="default">
+        <key-type>java.lang.Long</key-type>
+        <value-type>com.juko.itmo.infsys.data.entity.CoordinatesEntity</value-type>
+    </cache>
+
+    <cache alias="com.juko.itmo.infsys.data.entity.ImportJobEntity" uses-template="default">
+        <key-type>java.lang.Long</key-type>
+        <value-type>com.juko.itmo.infsys.data.entity.ImportJobEntity</value-type>
+    </cache>
+
+    <cache alias="default-query-results-region" uses-template="default"/>
+    <cache alias="default-update-timestamps-region" uses-template="default"/>
+
+</config>
+

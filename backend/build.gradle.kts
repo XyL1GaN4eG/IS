@@ -21,21 +21,21 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa") {
-        exclude(group = "org.hibernate.orm", module = "hibernate-core")
-    }
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation("org.springframework.boot:spring-boot-starter-websocket")
+    implementation("com.alibaba:druid-spring-boot-3-starter:1.2.23")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
+    implementation("io.minio:minio:8.5.17")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.eclipse.persistence:org.eclipse.persistence.jpa:4.0.8")
+    implementation("org.hibernate.orm:hibernate-jcache")
+    implementation("org.ehcache:ehcache")
+    implementation("javax.cache:cache-api")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     runtimeOnly("org.postgresql:postgresql")
-    // https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-ui
-//    implementation("org.springdoc:springdoc-openapi-ui:1.8.0")
-    // https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")

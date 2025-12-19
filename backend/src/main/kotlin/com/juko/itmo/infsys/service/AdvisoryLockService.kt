@@ -1,18 +1,16 @@
 package com.juko.itmo.infsys.service
 
-import org.springframework.jdbc.core.JdbcTemplate
+import jakarta.persistence.EntityManager
 import org.springframework.stereotype.Service
 
 @Service
 class AdvisoryLockService(
-    private val jdbcTemplate: JdbcTemplate,
+    private val entityManager: EntityManager,
 ) {
     fun lockPersonName(name: String) {
-        jdbcTemplate.queryForObject(
-            "select pg_advisory_xact_lock(hashtextextended(lower(?), 0))",
-            Any::class.java,
-            name,
-        )
+        entityManager
+            .createNativeQuery("select pg_advisory_xact_lock(hashtextextended(lower(?1), 0))")
+            .setParameter(1, name)
+            .resultList
     }
 }
-

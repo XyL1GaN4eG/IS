@@ -15,6 +15,7 @@ import com.juko.itmo.infsys.util.mapper.CoordinateMapper
 import com.juko.itmo.infsys.util.mapper.LocationMapper
 import com.juko.itmo.infsys.util.mapper.PersonMapper
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Isolation
 import org.springframework.transaction.annotation.Transactional
 import java.util.NoSuchElementException
 @Service
@@ -69,7 +70,7 @@ class PersonService(
             locationRepository.save(LocationEntity(x, y, z, name)) // <-- ключевая строка
         }
 
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     override fun create(dto: Person): Person {
         ensureUniqueName(dto.name)
         val entity = PersonEntity(
@@ -88,7 +89,7 @@ class PersonService(
         return out
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     fun update(id: Long, dto: Person): Person {
         val existing = repository.findById(id).orElseThrow { NoSuchElementException("Person not found: $id") }
         ensureUniqueName(dto.name, id)

@@ -7,27 +7,27 @@
         <collectionProp name="Arguments.arguments">
           <elementProp name="baseProtocol" elementType="Argument">
             <stringProp name="Argument.name">baseProtocol</stringProp>
-            <stringProp name="Argument.value">http</stringProp>
+            <stringProp name="Argument.value">${__P(baseProtocol,http)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="baseHost" elementType="Argument">
             <stringProp name="Argument.name">baseHost</stringProp>
-            <stringProp name="Argument.value">localhost</stringProp>
+            <stringProp name="Argument.value">${__P(baseHost,localhost)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="basePort" elementType="Argument">
             <stringProp name="Argument.name">basePort</stringProp>
-            <stringProp name="Argument.value">43261</stringProp>
+            <stringProp name="Argument.value">${__P(basePort,43261)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="personsFile" elementType="Argument">
             <stringProp name="Argument.name">personsFile</stringProp>
-            <stringProp name="Argument.value">backend/docs/jmeter/samples/persons-import.yaml</stringProp>
+            <stringProp name="Argument.value">${__P(personsFile,backend/docs/jmeter/samples/persons-import.yaml)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="locationsFile" elementType="Argument">
             <stringProp name="Argument.name">locationsFile</stringProp>
-            <stringProp name="Argument.value">backend/docs/jmeter/samples/locations-import.yaml</stringProp>
+            <stringProp name="Argument.value">${__P(locationsFile,backend/docs/jmeter/samples/locations-import.yaml)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>
@@ -64,10 +64,6 @@
         <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Seed Headers">
           <collectionProp name="HeaderManager.headers">
             <elementProp name="" elementType="Header">
-              <stringProp name="Header.name">Content-Type</stringProp>
-              <stringProp name="Header.value">application/json</stringProp>
-            </elementProp>
-            <elementProp name="" elementType="Header">
               <stringProp name="Header.name">X-User</stringProp>
               <stringProp name="Header.value">seed-admin</stringProp>
             </elementProp>
@@ -95,6 +91,15 @@
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="JSON Content-Type">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Content-Type</stringProp>
+                <stringProp name="Header.value">application/json</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
           <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract seed ID">
             <stringProp name="JSONPostProcessor.referenceNames">seedId</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$.id</stringProp>
@@ -103,13 +108,24 @@
             <stringProp name="JSONPostProcessor.defaultValuesString"></stringProp>
           </JSONPostProcessor>
           <hashTree/>
-          <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Store seed ID">
+          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Store seed ID">
             <stringProp name="scriptLanguage">groovy</stringProp>
             <stringProp name="script">props.put(&quot;seedPersonId&quot;, vars.get(&quot;seedId&quot;))</stringProp>
             <stringProp name="parameters"></stringProp>
             <stringProp name="filename"></stringProp>
             <stringProp name="cacheKey">false</stringProp>
-          </JSR223Sampler>
+          </JSR223PostProcessor>
+          <hashTree/>
+          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Init unique name race">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">props.put(&quot;racePersonName&quot;, &quot;Race_&quot; + System.currentTimeMillis())
+props.put(&quot;raceSuccessCount&quot;, &quot;0&quot;)
+props.put(&quot;raceFailCount&quot;, &quot;0&quot;)
+props.remove(&quot;raceCreatedId&quot;)</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">false</stringProp>
+          </JSR223PostProcessor>
           <hashTree/>
         </hashTree>
       </hashTree>
@@ -127,16 +143,12 @@
         <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Concurrent Headers">
           <collectionProp name="HeaderManager.headers">
             <elementProp name="" elementType="Header">
-              <stringProp name="Header.name">Content-Type</stringProp>
-              <stringProp name="Header.value">application/json</stringProp>
-            </elementProp>
-            <elementProp name="" elementType="Header">
               <stringProp name="Header.name">X-User</stringProp>
-              <stringProp name="Header.value">user_${__threadNum}</stringProp>
+              <stringProp name="Header.value">admin_${__threadNum}</stringProp>
             </elementProp>
             <elementProp name="" elementType="Header">
               <stringProp name="Header.name">X-Role</stringProp>
-              <stringProp name="Header.value">USER</stringProp>
+              <stringProp name="Header.value">ADMIN</stringProp>
             </elementProp>
           </collectionProp>
         </HeaderManager>
@@ -155,7 +167,31 @@
             </collectionProp>
           </elementProp>
         </HTTPSamplerProxy>
-        <hashTree/>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="JSON Content-Type">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Content-Type</stringProp>
+                <stringProp name="Header.value">application/json</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
+          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Allow 200/404">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">def code = prev.getResponseCode()
+if (code == '200' || code == '404') {
+  prev.setSuccessful(true)
+} else {
+  prev.setSuccessful(false)
+  prev.setResponseMessage('Unexpected HTTP ' + code + ' ' + prev.getResponseDataAsString())
+}</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">false</stringProp>
+          </JSR223PostProcessor>
+          <hashTree/>
+        </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="DELETE /persons/{seed}">
           <stringProp name="HTTPSampler.path">/persons/${__groovy(props.get(&quot;seedPersonId&quot;))}</stringProp>
           <stringProp name="HTTPSampler.method">DELETE</stringProp>
@@ -164,7 +200,124 @@
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
         </HTTPSamplerProxy>
+        <hashTree>
+          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Allow 200/404">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">def code = prev.getResponseCode()
+if (code == '200' || code == '404') {
+  prev.setSuccessful(true)
+} else {
+  prev.setSuccessful(false)
+  prev.setResponseMessage('Unexpected HTTP ' + code + ' ' + prev.getResponseDataAsString())
+}</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">false</stringProp>
+          </JSR223PostProcessor>
+          <hashTree/>
+        </hashTree>
+      </hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="UniqueNameRace" enabled="true">
+        <intProp name="ThreadGroup.num_threads">5</intProp>
+        <intProp name="ThreadGroup.ramp_time">1</intProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+          <stringProp name="LoopController.loops">1</stringProp>
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+        </elementProp>
+      </ThreadGroup>
+      <hashTree>
+        <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Race Headers">
+          <collectionProp name="HeaderManager.headers">
+            <elementProp name="" elementType="Header">
+              <stringProp name="Header.name">X-User</stringProp>
+              <stringProp name="Header.value">race_${__threadNum}</stringProp>
+            </elementProp>
+            <elementProp name="" elementType="Header">
+              <stringProp name="Header.name">X-Role</stringProp>
+              <stringProp name="Header.value">USER</stringProp>
+            </elementProp>
+          </collectionProp>
+        </HeaderManager>
         <hashTree/>
+        <SyncTimer guiclass="SyncTimerGui" testclass="SyncTimer" testname="Sync create" enabled="true">
+          <intProp name="groupSize">5</intProp>
+          <longProp name="timeoutInMs">10000</longProp>
+        </SyncTimer>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /persons (race)">
+          <stringProp name="HTTPSampler.path">/persons</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&quot;name&quot;:&quot;${__groovy(props.get(&quot;racePersonName&quot;))}&quot;,&quot;height&quot;:170,&quot;eyeColor&quot;:&quot;GREEN&quot;,&quot;hairColor&quot;:&quot;BROWN&quot;,&quot;coordinates&quot;:{&quot;x&quot;:10,&quot;y&quot;:25.5},&quot;location&quot;:{&quot;x&quot;:1,&quot;y&quot;:2.2,&quot;z&quot;:3,&quot;name&quot;:&quot;RaceLoc&quot;},&quot;nationality&quot;:&quot;ITALY&quot;}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="JSON Content-Type">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Content-Type</stringProp>
+                <stringProp name="Header.value">application/json</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract race ID">
+            <stringProp name="JSONPostProcessor.referenceNames">raceId</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.id</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
+          </JSONPostProcessor>
+          <hashTree/>
+          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Race: count success/fail">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">def code = prev.getResponseCode()
+def isOk = (code == '200' || code == '201')
+def isDup = (code == '400' || code == '409')
+
+if (isOk) {
+  prev.setSuccessful(true)
+  def id = vars.get('raceId')
+  if (id) {
+    synchronized(props) {
+      if (props.get('raceCreatedId') == null) {
+        props.put('raceCreatedId', id)
+      }
+    }
+  }
+} else if (isDup) {
+  prev.setSuccessful(true)
+} else {
+  prev.setSuccessful(false)
+  prev.setResponseMessage('Unexpected HTTP ' + code + ' ' + prev.getResponseDataAsString())
+}
+
+synchronized(props) {
+  def success = (props.get('raceSuccessCount') ?: '0') as int
+  def fail = (props.get('raceFailCount') ?: '0') as int
+  if (isOk) {
+    success++
+  } else {
+    fail++
+  }
+  props.put('raceSuccessCount', success.toString())
+  props.put('raceFailCount', fail.toString())
+}</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">false</stringProp>
+          </JSR223PostProcessor>
+          <hashTree/>
+        </hashTree>
       </hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="RegularUsers" enabled="true">
         <intProp name="ThreadGroup.num_threads">3</intProp>
@@ -179,10 +332,6 @@
       <hashTree>
         <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="User Headers">
           <collectionProp name="HeaderManager.headers">
-            <elementProp name="" elementType="Header">
-              <stringProp name="Header.name">Content-Type</stringProp>
-              <stringProp name="Header.value">application/json</stringProp>
-            </elementProp>
             <elementProp name="" elementType="Header">
               <stringProp name="Header.name">X-User</stringProp>
               <stringProp name="Header.value">demo_${__threadNum}</stringProp>
@@ -209,6 +358,15 @@
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="JSON Content-Type">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Content-Type</stringProp>
+                <stringProp name="Header.value">application/json</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
           <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract person ID">
             <stringProp name="JSONPostProcessor.referenceNames">userPersonId</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$.id</stringProp>
@@ -230,7 +388,17 @@
             </collectionProp>
           </elementProp>
         </HTTPSamplerProxy>
-        <hashTree/>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="JSON Content-Type">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Content-Type</stringProp>
+                <stringProp name="Header.value">application/json</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
+        </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="DELETE /persons/{id}">
           <stringProp name="HTTPSampler.path">/persons/${userPersonId}</stringProp>
           <stringProp name="HTTPSampler.method">DELETE</stringProp>
@@ -248,8 +416,71 @@
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
+          <elementProp name="HTTPsampler.Files" elementType="HTTPFileArgs">
+            <collectionProp name="HTTPFileArgs.files">
+              <elementProp name="" elementType="HTTPFileArg">
+                <stringProp name="File.path">${personsImportFile}</stringProp>
+                <stringProp name="File.paramname">file</stringProp>
+                <stringProp name="File.mimetype">application/x-yaml</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
         </HTTPSamplerProxy>
-        <hashTree/>
+        <hashTree>
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="Generate persons import file">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">def suffix = ctx.getThreadNum() + '_' + System.currentTimeMillis()
+def tmpDir = new File(System.getProperty('java.io.tmpdir'), 'is-jmeter')
+tmpDir.mkdirs()
+def f = new File(tmpDir, 'persons-' + suffix + '.yaml')
+def yaml =
+        'persons:\n' +
+        '  - name: JMeter_' + suffix + '_A\n' +
+        '    height: 170\n' +
+        '    eyeColor: GREEN\n' +
+        '    hairColor: BROWN\n' +
+        '    nationality: ITALY\n' +
+        '    coordinates:\n' +
+        '      x: 10\n' +
+        '      y: 25.5\n' +
+        '    location:\n' +
+        '      x: 1\n' +
+        '      y: 2.2\n' +
+        '      z: 3\n' +
+        '      name: JM-Loc-' + suffix + '-A\n' +
+        '  - name: JMeter_' + suffix + '_B\n' +
+        '    height: 185\n' +
+        '    eyeColor: ORANGE\n' +
+        '    hairColor: WHITE\n' +
+        '    nationality: INDIA\n' +
+        '    coordinates:\n' +
+        '      x: 20\n' +
+        '      y: 30.0\n' +
+        '    location:\n' +
+        '      x: -5\n' +
+        '      y: 7.1\n' +
+        '      z: 9\n' +
+        '      name: JM-Loc-' + suffix + '-B\n'
+f.text = yaml
+vars.put('personsImportFile', f.getAbsolutePath())</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">false</stringProp>
+          </JSR223PreProcessor>
+          <hashTree/>
+          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Expect 200">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">def code = prev.getResponseCode()
+if (code != '200') {
+  prev.setSuccessful(false)
+  prev.setResponseMessage('Import failed HTTP ' + code + ' ' + prev.getResponseDataAsString())
+}</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">false</stringProp>
+          </JSR223PostProcessor>
+          <hashTree/>
+        </hashTree>
       </hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Admins" enabled="true">
         <intProp name="ThreadGroup.num_threads">1</intProp>
@@ -264,10 +495,6 @@
       <hashTree>
         <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Admin Headers">
           <collectionProp name="HeaderManager.headers">
-            <elementProp name="" elementType="Header">
-              <stringProp name="Header.name">Content-Type</stringProp>
-              <stringProp name="Header.value">application/json</stringProp>
-            </elementProp>
             <elementProp name="" elementType="Header">
               <stringProp name="Header.name">X-User</stringProp>
               <stringProp name="Header.value">admin</stringProp>
@@ -296,8 +523,53 @@
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
+          <elementProp name="HTTPsampler.Files" elementType="HTTPFileArgs">
+            <collectionProp name="HTTPFileArgs.files">
+              <elementProp name="" elementType="HTTPFileArg">
+                <stringProp name="File.path">${locationsImportFile}</stringProp>
+                <stringProp name="File.paramname">file</stringProp>
+                <stringProp name="File.mimetype">application/x-yaml</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
         </HTTPSamplerProxy>
-        <hashTree/>
+        <hashTree>
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="Generate locations import file">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">def suffix = 'admin_' + System.currentTimeMillis()
+def tmpDir = new File(System.getProperty('java.io.tmpdir'), 'is-jmeter')
+tmpDir.mkdirs()
+def f = new File(tmpDir, 'locations-' + suffix + '.yaml')
+def yaml =
+        'locations:\n' +
+        '  - name: JM-Loc-' + suffix + '-1\n' +
+        '    x: 5\n' +
+        '    y: 12.5\n' +
+        '    z: 3\n' +
+        '  - name: JM-Loc-' + suffix + '-2\n' +
+        '    x: -3\n' +
+        '    y: 9.2\n' +
+        '    z: 15\n'
+f.text = yaml
+vars.put('locationsImportFile', f.getAbsolutePath())</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">false</stringProp>
+          </JSR223PreProcessor>
+          <hashTree/>
+          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Expect 200">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">def code = prev.getResponseCode()
+if (code != '200') {
+  prev.setSuccessful(false)
+  prev.setResponseMessage('Import failed HTTP ' + code + ' ' + prev.getResponseDataAsString())
+}</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">false</stringProp>
+          </JSR223PostProcessor>
+          <hashTree/>
+        </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /location/imports">
           <stringProp name="HTTPSampler.path">/location/imports?scope=all</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
@@ -306,6 +578,30 @@
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
         </HTTPSamplerProxy>
+        <hashTree/>
+      </hashTree>
+      <PostThreadGroup guiclass="PostThreadGroupGui" testclass="PostThreadGroup" testname="Assertions" enabled="true">
+        <intProp name="ThreadGroup.num_threads">1</intProp>
+        <intProp name="ThreadGroup.ramp_time">1</intProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+          <stringProp name="LoopController.loops">1</stringProp>
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+        </elementProp>
+      </PostThreadGroup>
+      <hashTree>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Assert unique name race">
+          <stringProp name="scriptLanguage">groovy</stringProp>
+          <stringProp name="script">def success = (props.get('raceSuccessCount') ?: '0') as int
+def fail = (props.get('raceFailCount') ?: '0') as int
+if (success != 1) {
+  throw new AssertionError('Unique name race expected 1 success, got ' + success + ' (fail=' + fail + ')')
+}</stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="cacheKey">false</stringProp>
+        </JSR223Sampler>
         <hashTree/>
       </hashTree>
       <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree">

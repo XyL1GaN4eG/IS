@@ -1,12 +1,71 @@
-L2 Cache: enabled
-Command: k6 run docs/k6/scenario.js
+rd/backend on  new-try-to-k6 via 🅶 v8.14.3 via ☕ v21.0.9 via 🅺 took 1m33s
+ 15:05:52  ❯ time k6 run docs/k6/scenario.js
 
-Summary:
-- Scenarios: CRUD/import/conflicts/unique + read_heavy (1 VU, 1000 iterations)
-- Total checks: 1140 (all succeeded)
-- HTTP: avg duration 94.11 ms, 11.11 req/s, 3.18% failures (mostly timeouts/drop). 
-- Execution: iteration avg 103 ms, 1040 iterations completed.
-- read_heavy completed 1000 iterations, read load finished in ~1m24s.
-- Logging shows 11k HTTP reqs, 2.7 MB received, 221 kB sent.
+         /\      Grafana   /‾‾/
+    /\  /  \     |\  __   /  /
+   /  \/    \    | |/ /  /   ‾‾\
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/
 
-Interpretation: With L2 cache on, repeated GET /persons requests stay around 100 ms and complete quickly, so read-heavy scenario finishes without dropping iterations.
+     execution: local
+        script: docs/k6/scenario.js
+        output: -
+
+     scenarios: (100.00%) 5 scenarios, 9 max VUs, 3m50s max duration (incl. graceful stop):
+              * crud_and_import: 2 iterations for each of 5 VUs (maxDuration: 2m0s, exec: crudAndImport, gracefulStop: 30s)
+              * conflict_update_delete: 10 iterations for each of 1 VUs (maxDuration: 2m0s, exec: concurrentUpdateDelete, startTime: 5s, gracefulStop: 30s)
+              * conflict_delete_delete: 10 iterations for each of 1 VUs (maxDuration: 2m0s, exec: concurrentDeleteDelete, startTime: 10s, gracefulStop: 30s)
+              * unique_name_race: 10 iterations for each of 1 VUs (maxDuration: 2m0s, exec: uniqueCreateRace, startTime: 15s, gracefulStop: 30s)
+              * read_heavy: 1000 iterations for each of 1 VUs (maxDuration: 3m0s, exec: readOnly, startTime: 20s, gracefulStop: 30s)
+
+
+  █ TOTAL RESULTS
+
+    checks_total.......: 1140    10.911791/s
+    checks_succeeded...: 100.00% 1140 out of 1140
+    checks_failed......: 0.00%   0 out of 1140
+
+    ✓ POST /persons -> 200
+    ✓ PUT /persons/{id} -> 200
+    ✓ DELETE /persons/{id} -> 200
+    ✓ POST /persons/import -> 200
+    ✓ POST /location/import -> 200
+    ✓ concurrent PUT -> 200/404/409
+    ✓ concurrent DELETE -> 200/404
+    ✓ after delete person is gone (404)
+    ✓ one delete wins, one gets 404
+    ✓ exactly one create succeeds
+    ✓ cleanup delete -> 200
+    ✓ name is available after cleanup
+    ✓ GET /persons -> 200
+
+    HTTP
+    http_req_duration..............: avg=94.11ms  min=18.6ms  med=78.38ms max=933.16ms p(90)=122.21ms p(95)=174.08ms
+      { expected_response:true }...: avg=93.2ms   min=18.6ms  med=78.34ms max=933.16ms p(90)=118.61ms p(95)=168.14ms
+    http_req_failed................: 3.18%  37 out of 1161
+    http_reqs......................: 1161   11.112798/s
+
+    EXECUTION
+    iteration_duration.............: avg=103.17ms min=38.41ms med=78.16ms max=1.63s    p(90)=104.4ms  p(95)=142.58ms
+    iterations.....................: 1040   9.954617/s
+    vus............................: 1      min=0          max=5
+    vus_max........................: 9      min=9          max=9
+
+    NETWORK
+    data_received..................: 2.7 MB 25 kB/s
+    data_sent......................: 221 kB 2.1 kB/s
+
+
+
+
+running (1m44.5s), 0/9 VUs, 1040 complete and 0 interrupted iterations
+crud_and_import        ✓ [=====================] 5 VUs  0m02.8s/2m0s  10/10 iters, 2 per VU
+conflict_update_delete ✓ [=====================] 1 VUs  0m03.7s/2m0s  10/10 iters, 10 per VU
+conflict_delete_delete ✓ [=====================] 1 VUs  0m02.5s/2m0s  10/10 iters, 10 per VU
+unique_name_race       ✓ [=====================] 1 VUs  0m03.3s/2m0s  10/10 iters, 10 per VU
+read_heavy             ✓ [=====================] 1 VUs  1m23.9s/3m0s  1000/1000 iters, 1000 per VU
+________________________________________________________
+Executed in  104.92 secs      fish           external
+   usr time  657.98 millis    0.25 millis  657.73 millis
+   sys time  548.22 millis    2.61 millis  545.61 millis
+

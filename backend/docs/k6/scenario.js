@@ -10,6 +10,7 @@ const DEFAULT_CONFLICT_ITERS = parseInt(__ENV.CONFLICT_ITERS || '10', 10);
 const DEFAULT_UNIQUE_ITERS = parseInt(__ENV.UNIQUE_ITERS || '10', 10);
 const DEFAULT_READ_VUS = parseInt(__ENV.READ_VUS || '1', 10);
 const DEFAULT_READ_ITERS = parseInt(__ENV.READ_ITERS || '1000', 10);
+const DEFAULT_L2_LOG_EVERY = parseInt(__ENV.L2_LOG_EVERY || '200', 10);
 
 const READY_TIMEOUT_SEC = parseFloat(__ENV.READY_TIMEOUT_SEC || '60');
 const READY_INTERVAL_SEC = parseFloat(__ENV.READY_INTERVAL_SEC || '0.5');
@@ -27,6 +28,21 @@ function jsonParams(username, role) {
 
 function multipartParams(username, role) {
   return { headers: apiHeaders(username, role) };
+}
+
+function adminParams() {
+  return { headers: apiHeaders('k6_monitor', 'ADMIN') };
+}
+
+function setL2Logging(enabled) {
+  const res = http.put(`${BASE_URL}/cache/l2/logging?enabled=${enabled}`, null, adminParams());
+  check(res, { 'PUT /cache/l2/logging -> 200': (r) => r.status === 200 });
+}
+
+function logL2Stats(label) {
+  const res = http.get(`${BASE_URL}/cache/l2/stats`, adminParams());
+  check(res, { 'GET /cache/l2/stats -> 200': (r) => r.status === 200 });
+  console.log(`${label}: ${JSON.stringify(res.json())}`);
 }
 
 function uniqueSuffix(prefix) {
@@ -170,6 +186,8 @@ export function setup() {
     lastError = res.error || '';
 
     if (res.status === 200) {
+      setL2Logging(true);
+      logL2Stats('initial');
       return { ready: true };
     }
 
@@ -292,4 +310,12 @@ function readPage(username, role) {
 export function readOnly() {
   const username = `k6_reader_${exec.vu.idInTest}`;
   readPage(username, 'USER');
+  if (DEFAULT_L2_LOG_EVERY > 0 && exec.scenario.iterationInTest % DEFAULT_L2_LOG_EVERY === 0) {
+    logL2Stats(`read_only iter ${exec.scenario.iterationInTest}`);
+  }
+}
+
+export function teardown() {
+  logL2Stats('final');
+  setL2Logging(false);
 }

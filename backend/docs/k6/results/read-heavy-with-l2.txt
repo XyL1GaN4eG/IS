@@ -1,0 +1,12 @@
+L2 Cache: enabled
+Command: k6 run docs/k6/scenario.js
+
+Summary:
+- Scenarios: CRUD/import/conflicts/unique + read_heavy (1 VU, 1000 iterations)
+- Total checks: 1140 (all succeeded)
+- HTTP: avg duration 94.11 ms, 11.11 req/s, 3.18% failures (mostly timeouts/drop). 
+- Execution: iteration avg 103 ms, 1040 iterations completed.
+- read_heavy completed 1000 iterations, read load finished in ~1m24s.
+- Logging shows 11k HTTP reqs, 2.7 MB received, 221 kB sent.
+
+Interpretation: With L2 cache on, repeated GET /persons requests stay around 100 ms and complete quickly, so read-heavy scenario finishes without dropping iterations.

@@ -1,0 +1,10 @@
+L2 Cache: disabled
+Command: k6 run docs/k6/scenario.js
+
+Summary:
+- Scenarios: same as above but second run.
+- Total checks: 519 (all succeeded). HTTP req duration avg 380.66 ms, throughput 2.7 req/s, 7.22% failures (timeouts/dropped iterations).
+- Execution: iteration avg 485 ms but only 419 iterations completed; 621 iterations dropped while read_heavy still running (1000 target).
+- read_heavy scenario did not finish before 3m timeout, only 379 of 1000 iterations completed.
+
+Interpretation: Without L2 cache repeated reads hit the DB and slow down massively; load generator drops iterations because responses exceed the scenario window.

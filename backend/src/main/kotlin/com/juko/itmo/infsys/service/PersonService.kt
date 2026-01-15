@@ -14,6 +14,8 @@ import com.juko.itmo.infsys.service.abstraction.CrudService
 import com.juko.itmo.infsys.util.mapper.CoordinateMapper
 import com.juko.itmo.infsys.util.mapper.LocationMapper
 import com.juko.itmo.infsys.util.mapper.PersonMapper
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Page
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Isolation
 import org.springframework.transaction.annotation.Transactional
@@ -91,7 +93,7 @@ class PersonService(
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     fun update(id: Long, dto: Person): Person {
-        val existing = repository.findById(id).orElseThrow { NoSuchElementException("Person not found: $id") }
+        val existing = repository.findByIdForUpdate(id) ?: throw NoSuchElementException("Person not found: $id")
         ensureUniqueName(dto.name, id)
         existing.name = dto.name
         existing.coordinates = resolveCoordinates(dto.coordinates)
@@ -107,7 +109,8 @@ class PersonService(
 
     @Transactional
     override fun delete(id: Long) {
-        super.delete(id)
+        val entity = repository.findByIdForUpdate(id) ?: throw NoSuchElementException("Person not found: $id")
+        repository.delete(entity)
         sseService.broadcastAfterCommit("persons", mapOf("action" to "deleted", "id" to id))
     }
 
@@ -141,6 +144,9 @@ class PersonService(
     fun findByLocationId(locationId: Long): List<Person> =
         repository.findAllByLocationId(locationId)
             .map { mapper.toDto(it) }
+
+    override fun list(pageable: Pageable): Page<Person> =
+        repository.findAllCached(pageable).map { mapper.toDto(it) }
 
 
 }

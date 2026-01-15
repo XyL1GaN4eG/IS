@@ -3,10 +3,13 @@ package com.juko.itmo.infsys.data.entity
 import jakarta.persistence.*
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Pattern
+import org.hibernate.annotations.CacheConcurrencyStrategy
+import org.hibernate.annotations.Cache as HibernateCache
 
 @Entity
 @Table(name = "location")
 @Cacheable
+@HibernateCache(usage = CacheConcurrencyStrategy.READ_WRITE)
 class LocationEntity(
     @field:NotNull
     @Column(name = "loc_x", nullable = false)

@@ -1,0 +1,145 @@
+        cache:
+          use_second_level_cache: true
+          use_query_cache: false
+
+
+3rd/backend on  new-try-to-k6 via 🅶 v8.14.3 via ☕ v21.0.9 via 🅺
+ 19:08:28  ❯ time k6 run docs/k6/scenario.js && time k6 run docs/k6/l2-stats.js
+
+         /\      Grafana   /‾‾/
+    /\  /  \     |\  __   /  /
+   /  \/    \    | |/ /  /   ‾‾\
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/
+
+     execution: local
+        script: docs/k6/scenario.js
+        output: -
+
+     scenarios: (100.00%) 5 scenarios, 9 max VUs, 3m50s max duration (incl. graceful stop):
+              * crud_and_import: 2 iterations for each of 5 VUs (maxDuration: 2m0s, exec: crudAndImport, gracefulStop: 30s)
+              * conflict_update_delete: 10 iterations for each of 1 VUs (maxDuration: 2m0s, exec: concurrentUpdateDelete, startTime: 5s, gracefulStop: 30s)
+              * conflict_delete_delete: 10 iterations for each of 1 VUs (maxDuration: 2m0s, exec: concurrentDeleteDelete, startTime: 10s, gracefulStop: 30s)
+              * unique_name_race: 10 iterations for each of 1 VUs (maxDuration: 2m0s, exec: uniqueCreateRace, startTime: 15s, gracefulStop: 30s
+              * read_heavy: 1000 iterations for each of 1 VUs (maxDuration: 3m0s, exec: readOnly, startTime: 20s, gracefulStop: 30s)
+
+INFO[0000] initial: {"hits":0,"misses":2}                source=console
+INFO[0020] read_only iter 0: {"hits":0,"misses":12}      source=console
+INFO[0039] read_only iter 200: {"misses":392,"hits":3262}  source=console
+INFO[0050] read_only iter 400: {"hits":7656,"misses":392}  source=console
+INFO[0060] read_only iter 600: {"hits":11356,"misses":392}  source=console
+INFO[0071] read_only iter 800: {"hits":15326,"misses":392}  source=console
+INFO[0081] final: {"hits":18984,"misses":392}            source=console
+
+
+  █ TOTAL RESULTS
+
+    checks_total.......: 1149    14.030587/s
+    checks_succeeded...: 100.00% 1149 out of 1149
+    checks_failed......: 0.00%   0 out of 1149
+
+    ✓ PUT /cache/l2/logging -> 200
+    ✓ GET /cache/l2/stats -> 200
+    ✓ POST /persons -> 200
+    ✓ PUT /persons/{id} -> 200
+    ✓ DELETE /persons/{id} -> 200
+    ✓ POST /persons/import -> 200
+    ✓ POST /location/import -> 200
+    ✓ concurrent PUT -> 200/404/409
+    ✓ concurrent DELETE -> 200/404
+    ✓ after delete person is gone (404)
+    ✓ one delete wins, one gets 404
+    ✓ exactly one create succeeds
+    ✓ cleanup delete -> 200
+    ✓ name is available after cleanup
+    ✓ GET /persons -> 200
+
+    HTTP
+    http_req_duration..............: avg=74.04ms min=1.89ms  med=59.9ms  max=1.01s p(90)=108.46ms p(95)=192.67ms
+      { expected_response:true }...: avg=72.04ms min=1.89ms  med=59.75ms max=1.01s p(90)=88.3ms   p(95)=169.94ms
+    http_req_failed................: 3.16%  37 out of 1170
+    http_reqs......................: 1170   14.287021/s
+
+    EXECUTION
+    iteration_duration.............: avg=81.28ms min=19.94ms med=59.74ms max=1.33s p(90)=70.2ms   p(95)=88.37ms
+    iterations.....................: 1040   12.699574/s
+    vus............................: 1      min=0          max=5
+    vus_max........................: 9      min=9          max=9
+
+    NETWORK
+    data_received..................: 3.3 MB 40 kB/s
+    data_sent......................: 222 kB 2.7 kB/s
+
+
+
+
+running (1m21.9s), 0/9 VUs, 1040 complete and 0 interrupted iterations
+crud_and_import        ✓ [ 100% ] 5 VUs  0m02.4s/2m0s  10/10 iters, 2 per VU
+conflict_update_delete ✓ [ 100% ] 1 VUs  0m04.0s/2m0s  10/10 iters, 10 per VU
+conflict_delete_delete ✓ [ 100% ] 1 VUs  0m03.3s/2m0s  10/10 iters, 10 per VU
+unique_name_race       ✓ [ 100% ] 1 VUs  0m04.0s/2m0s  10/10 iters, 10 per VU
+read_heavy             ✓ [ 100% ] 1 VUs  1m01.3s/3m0s  1000/1000 iters, 1000 per VU
+
+________________________________________________________
+Executed in   82.23 secs    fish           external
+   usr time    1.31 secs    0.32 millis    1.31 secs
+   sys time    0.62 secs    2.13 millis    0.62 secs
+
+
+         /\      Grafana   /‾‾/
+    /\  /  \     |\  __   /  /
+   /  \/    \    | |/ /  /   ‾‾\
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/
+
+     execution: local
+        script: docs/k6/l2-stats.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 1 max VUs, 10m30s max duration (incl. graceful stop):
+              * default: 1 iterations for each of 1 VUs (maxDuration: 10m0s, gracefulStop: 30s)
+
+INFO[0000] initial: {"hits":18984,"misses":392}          source=console
+INFO[0000] after 1 reads: {"hits":19004,"misses":392}    source=console
+INFO[0001] after 11 reads: {"hits":19204,"misses":392}   source=console
+INFO[0003] after 21 reads: {"hits":19404,"misses":392}   source=console
+INFO[0004] after 31 reads: {"hits":19604,"misses":392}   source=console
+INFO[0006] after 41 reads: {"hits":19804,"misses":392}   source=console
+INFO[0007] final: {"hits":19984,"misses":392}            source=console
+
+
+  █ TOTAL RESULTS
+
+    checks_total.......: 57      7.403633/s
+    checks_succeeded...: 100.00% 57 out of 57
+    checks_failed......: 0.00%   0 out of 57
+
+    ✓ GET /cache/l2/stats -> 200
+    ✓ GET /persons -> 200
+
+    HTTP
+    http_req_duration..............: avg=44.49ms min=2.48ms med=47.77ms max=69.66ms p(90)=65.58ms p(95)=65.93ms
+      { expected_response:true }...: avg=44.49ms min=2.48ms med=47.77ms max=69.66ms p(90)=65.58ms p(95)=65.93ms
+    http_req_failed................: 0.00%  0 out of 59
+    http_reqs......................: 59     7.66341/s
+
+    EXECUTION
+    iteration_duration.............: avg=7.67s   min=7.67s  med=7.67s   max=7.67s   p(90)=7.67s   p(95)=7.67s
+    iterations.....................: 1      0.129888/s
+    vus............................: 1      min=1       max=1
+    vus_max........................: 1      min=1       max=1
+
+    NETWORK
+    data_received..................: 167 kB 22 kB/s
+    data_sent......................: 7.5 kB 981 B/s
+
+
+
+
+running (00m07.7s), 0/1 VUs, 1 complete and 0 interrupted iterations
+default ✓ [================] 1 VUs  00m07.7s/10m0s  1/1 iters, 1 per VU
+
+________________________________________________________
+Executed in    7.91 secs      fish           external
+   usr time  135.04 millis    0.37 millis  134.67 millis
+   sys time   72.31 millis    1.69 millis   70.62 millis

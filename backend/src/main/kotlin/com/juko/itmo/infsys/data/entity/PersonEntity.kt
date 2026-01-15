@@ -5,11 +5,14 @@ import com.juko.itmo.infsys.data.model.Country
 import com.juko.itmo.infsys.data.converter.ZonedDateTimeConverter
 import jakarta.persistence.*
 import jakarta.validation.constraints.*
+import org.hibernate.annotations.CacheConcurrencyStrategy
+import org.hibernate.annotations.Cache as HibernateCache
 import java.time.ZonedDateTime
 
 @Entity
 @Table(name = "person")
 @Cacheable
+@HibernateCache(usage = CacheConcurrencyStrategy.READ_WRITE)
 class PersonEntity(
     @Column(name = "name", nullable = false)
     @NotBlank(message = "Name may not be empty")

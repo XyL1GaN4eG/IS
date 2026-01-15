@@ -18,7 +18,7 @@ spring:
       test-on-return: false
       time-between-eviction-runs-millis: 60000
       min-evictable-idle-time-millis: 300000
-      default-transaction-isolation: 4 # java.sql.Connection.TRANSACTION_REPEATABLE_READ
+      default-transaction-isolation: 2 # java.sql.Connection.TRANSACTION_READ_COMMITTED
   jpa:
     hibernate:
       ddl-auto: update
@@ -32,10 +32,8 @@ spring:
         format_sql: true
         generate_statistics: true
         cache:
-          use_second_level_cache: true
-          use_query_cache: true
-          region:
-            factory_class: org.hibernate.cache.jcache.JCacheRegionFactory
+          use_second_level_cache: false
+          use_query_cache: false
         javax:
           cache:
             provider: org.ehcache.jsr107.EhcacheCachingProvider

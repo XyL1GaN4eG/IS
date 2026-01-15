@@ -14,6 +14,8 @@ import com.juko.itmo.infsys.service.abstraction.CrudService
 import com.juko.itmo.infsys.util.mapper.CoordinateMapper
 import com.juko.itmo.infsys.util.mapper.LocationMapper
 import com.juko.itmo.infsys.util.mapper.PersonMapper
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Page
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.NoSuchElementException
@@ -141,6 +143,9 @@ class PersonService(
     fun findByLocationId(locationId: Long): List<Person> =
         repository.findAllByLocationId(locationId)
             .map { mapper.toDto(it) }
+
+    override fun list(pageable: Pageable): Page<Person> =
+        repository.findAllCached(pageable).map { mapper.toDto(it) }
 
 
 }

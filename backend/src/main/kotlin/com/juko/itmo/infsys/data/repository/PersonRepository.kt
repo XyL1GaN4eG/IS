@@ -2,9 +2,13 @@ package com.juko.itmo.infsys.data.repository
 
 import com.juko.itmo.infsys.data.entity.PersonEntity
 import jakarta.persistence.LockModeType
+import jakarta.persistence.QueryHint
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Lock
 import org.springframework.data.jpa.repository.Query
+import org.springframework.data.jpa.repository.QueryHints
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 
@@ -37,4 +41,13 @@ interface PersonRepository : JpaRepository<PersonEntity, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select p from PersonEntity p where p.id = :id")
     fun findByIdForUpdate(@Param("id") id: Long): PersonEntity?
+
+    @Query("select p from PersonEntity p")
+    @QueryHints(
+        value = [
+            QueryHint(name = "org.hibernate.cacheable", value = "true"),
+            QueryHint(name = "org.hibernate.cacheRegion", value = "person-page")
+        ]
+    )
+    fun findAllCached(pageable: Pageable): Page<PersonEntity>
 }

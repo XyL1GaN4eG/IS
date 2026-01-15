@@ -20,8 +20,8 @@ services:
       MINIO_ROOT_PASSWORD: minioadmin
     command: server /data --console-address ":9001"
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - "${MINIO_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
     volumes:
       - minio-data:/data
 
@@ -39,7 +39,7 @@ services:
       MINIO_SECRET_KEY: minioadmin
       MINIO_BUCKET: imports
     ports:
-      - "43261:43261"
+      - "${BACKEND_PORT:-43261}:43261"
     depends_on:
       postgres:
         condition: service_healthy

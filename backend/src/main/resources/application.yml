@@ -18,7 +18,7 @@ spring:
       test-on-return: false
       time-between-eviction-runs-millis: 60000
       min-evictable-idle-time-millis: 300000
-      default-transaction-isolation: 4 # java.sql.Connection.TRANSACTION_REPEATABLE_READ
+      default-transaction-isolation: 2 # java.sql.Connection.TRANSACTION_READ_COMMITTED
   jpa:
     hibernate:
       ddl-auto: update

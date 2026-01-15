@@ -8,6 +8,8 @@ const DEFAULT_CRUD_VUS = parseInt(__ENV.CRUD_VUS || '5', 10);
 const DEFAULT_CRUD_ITERS = parseInt(__ENV.CRUD_ITERS || '2', 10);
 const DEFAULT_CONFLICT_ITERS = parseInt(__ENV.CONFLICT_ITERS || '10', 10);
 const DEFAULT_UNIQUE_ITERS = parseInt(__ENV.UNIQUE_ITERS || '10', 10);
+const DEFAULT_READ_VUS = parseInt(__ENV.READ_VUS || '5', 10);
+const DEFAULT_READ_ITERS = parseInt(__ENV.READ_ITERS || '1000', 10);
 
 const READY_TIMEOUT_SEC = parseFloat(__ENV.READY_TIMEOUT_SEC || '60');
 const READY_INTERVAL_SEC = parseFloat(__ENV.READY_INTERVAL_SEC || '0.5');
@@ -144,6 +146,14 @@ export const options = {
       maxDuration: '2m',
       exec: 'uniqueCreateRace',
     },
+    read_heavy: {
+      executor: 'per-vu-iterations',
+      vus: DEFAULT_READ_VUS,
+      iterations: DEFAULT_READ_ITERS,
+      startTime: '20s',
+      maxDuration: '3m',
+      exec: 'readOnly',
+    },
   },
 };
 
@@ -271,4 +281,15 @@ export function uniqueCreateRace() {
       'name is available after cleanup': (r) => r.status === 200 && r.json().available === true,
     });
   }
+}
+
+function readPage(username, role) {
+  const page = Math.floor(Math.random() * 20);
+  const res = http.get(`${BASE_URL}/persons?page=${page}&size=20`, jsonParams(username, role));
+  check(res, { 'GET /persons -> 200': (r) => r.status === 200 });
+}
+
+export function readOnly() {
+  const username = `k6_reader_${exec.vu.idInTest}`;
+  readPage(username, 'USER');
 }

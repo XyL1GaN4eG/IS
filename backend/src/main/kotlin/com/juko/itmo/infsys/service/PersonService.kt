@@ -90,7 +90,7 @@ class PersonService(
 
     @Transactional
     fun update(id: Long, dto: Person): Person {
-        val existing = repository.findById(id).orElseThrow { NoSuchElementException("Person not found: $id") }
+        val existing = repository.findByIdForUpdate(id) ?: throw NoSuchElementException("Person not found: $id")
         ensureUniqueName(dto.name, id)
         existing.name = dto.name
         existing.coordinates = resolveCoordinates(dto.coordinates)
@@ -106,7 +106,8 @@ class PersonService(
 
     @Transactional
     override fun delete(id: Long) {
-        super.delete(id)
+        val entity = repository.findByIdForUpdate(id) ?: throw NoSuchElementException("Person not found: $id")
+        repository.delete(entity)
         sseService.broadcastAfterCommit("persons", mapOf("action" to "deleted", "id" to id))
     }
 
